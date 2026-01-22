@@ -11,6 +11,11 @@
 #include "handles/button.hpp"
 #include "universal_ids.hpp"
 
+
+/**
+ * @brief Contains all Axis and Buttons of a standard gamepad controller (like an XBox controller)
+ * 
+ */
 class GamepadStatus
 {
 
@@ -39,7 +44,7 @@ class GamepadStatus
         // Joystick Pushdown
         Button m_button_left_stick;
         Button m_button_right_stick;
-        
+
 
         GamepadStatus() = default;
 
