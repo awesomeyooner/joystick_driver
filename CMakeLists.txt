@@ -23,7 +23,7 @@ foreach(Dependency IN ITEMS ${THIS_PACKAGE_INCLUDE_DEPENDS})
   find_package(${Dependency} REQUIRED)
 endforeach()
 
-set(SOURCE 
+set(SRC_FILES
   src/main.cpp
 
   src/joystick_node.cpp
@@ -35,7 +35,7 @@ set(SOURCE
 )
 
 # Link the dependencies
-add_executable( ${MAIN_EXEC} ${SOURCE})
+add_executable( ${MAIN_EXEC} ${SRC_FILES})
 ament_target_dependencies( ${MAIN_EXEC} PUBLIC ${THIS_PACKAGE_INCLUDE_DEPENDS})
 
 # Add Include Directory
