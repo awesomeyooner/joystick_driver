@@ -23,8 +23,19 @@ foreach(Dependency IN ITEMS ${THIS_PACKAGE_INCLUDE_DEPENDS})
   find_package(${Dependency} REQUIRED)
 endforeach()
 
+set(SOURCE 
+  src/main.cpp
+
+  src/joystick_node.cpp
+
+  src/handles/axis.cpp
+  src/handles/button.cpp
+  src/handles/gamepad_status.cpp
+  src/handles/gamepad.cpp
+)
+
 # Link the dependencies
-add_executable( ${MAIN_EXEC} src/Joystick.cpp)
+add_executable( ${MAIN_EXEC} ${SOURCE})
 ament_target_dependencies( ${MAIN_EXEC} PUBLIC ${THIS_PACKAGE_INCLUDE_DEPENDS})
 
 # Add Include Directory
@@ -38,7 +49,8 @@ target_include_directories( ${MAIN_EXEC} PUBLIC
 # Install Executable
 install(TARGETS
   ${MAIN_EXEC}
-  DESTINATION lib/${PROJECT_NAME})
+  DESTINATION lib/${PROJECT_NAME}
+)
 
 # Install Extra Folders
 install(DIRECTORY
