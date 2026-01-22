@@ -59,6 +59,12 @@ void Joystick::topic_callback(const sensor_msgs::msg::Joy& message) {
   if(gamepad.get_button(PS4::RIGHT_STICK)->on_press())
     RCLCPP_INFO(this->get_logger(), "pressed RIGHT STICK");
 
+  if(gamepad.get_button(PS4::LEFT_BUMPER)->on_press())
+    RCLCPP_INFO(this->get_logger(), "pressed LEFT BUMPER");
+
+  if(gamepad.get_button(PS4::RIGHT_BUMPER)->on_press())
+    RCLCPP_INFO(this->get_logger(), "pressed RIGHT BUMPER");
+
   auto twist_stamped = geometry_msgs::msg::TwistStamped();
 
   twist_stamped.header.frame_id = "command_velocity";

@@ -10,7 +10,7 @@ GamepadStatus::GamepadStatus(GamepadMapping mappings) :
     m_trigger_right(mappings.trigger_right, GamepadAxis::RIGHT_TRIGGER),
 
     m_bumper_left(mappings.bumper_left, GamepadButton::LEFT_BUMPER),
-    m_bumper_right(mappings.bumper_left, GamepadButton::RIGHT_BUMPER),
+    m_bumper_right(mappings.bumper_right, GamepadButton::RIGHT_BUMPER),
 
     m_button_down(mappings.button_down, GamepadButton::ACTION_DOWN),
     m_button_right(mappings.button_right, GamepadButton::ACTION_RIGHT),

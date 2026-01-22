@@ -27,8 +27,8 @@ namespace PS4{
         .trigger_left = 2,
         .trigger_right = 5,
 
-        .bumper_left = 5,
-        .bumper_right = 6,
+        .bumper_left = 4,
+        .bumper_right = 5,
 
         .button_down = 0,
         .button_right = 1,
