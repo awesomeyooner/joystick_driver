@@ -1,8 +1,8 @@
 #include "handles/button.hpp"
 
 
-Button::Button(int id, int index) :
-    m_universal_id(id), m_index_in_msg(index)
+Button::Button(int index, int id) :
+    m_index_in_msg(index), m_universal_id(id)
 {
     // Initialze with all states to false
     m_is_pressed = false;

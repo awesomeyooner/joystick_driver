@@ -18,11 +18,11 @@ Joystick::Joystick() : Node("joystick_teleop")
     std::string joystick_type = this->get_parameter("joystick_type").as_string();
 
     if(joystick_type == "ps4")
-      gamepad.initialize(hid_devices::PS4::MAP);
+      gamepad.initialize(PS4::MAP);
     else if(joystick_type == "xbox")
-      gamepad.initialize(hid_devices::Xbox::MAP);
+      gamepad.initialize(Xbox::MAP);
     else if(joystick_type == "gamesir")
-      gamepad.initialize(hid_devices::GameSir::MAP);
+      gamepad.initialize(GameSir::MAP);
     
     // rclcpp::Parameter
     max_tan = this->get_parameter("max_tangential_velocity").as_double();
@@ -38,25 +38,25 @@ void Joystick::topic_callback(const sensor_msgs::msg::Joy& message) {
 
   gamepad.update(message);
 
-  if(gamepad.get_button(hid_devices::PS4::X)->on_press)
+  if(gamepad.get_button(PS4::X)->on_press())
     RCLCPP_INFO(this->get_logger(), "pressed X");
   
-  if(gamepad.get_button(hid_devices::PS4::X)->on_release)
+  if(gamepad.get_button(PS4::X)->on_release())
     RCLCPP_INFO(this->get_logger(), "released X");
 
-  if(gamepad.get_button(hid_devices::PS4::CIRCLE)->on_press)
+  if(gamepad.get_button(PS4::CIRCLE)->on_press())
     RCLCPP_INFO(this->get_logger(), "pressed CIRCLE");
 
-  if(gamepad.get_button(hid_devices::PS4::SQUARE)->on_press)
+  if(gamepad.get_button(PS4::SQUARE)->on_press())
     RCLCPP_INFO(this->get_logger(), "pressed SQUARE");
 
-  if(gamepad.get_button(hid_devices::PS4::TRIANGLE)->on_press)
+  if(gamepad.get_button(PS4::TRIANGLE)->on_press())
     RCLCPP_INFO(this->get_logger(), "pressed TRIANGLE");
 
-  if(gamepad.get_button(hid_devices::PS4::LEFT_STICK)->on_press)
+  if(gamepad.get_button(PS4::LEFT_STICK)->on_press())
     RCLCPP_INFO(this->get_logger(), "pressed LEFT STICk");
 
-  if(gamepad.get_button(hid_devices::PS4::RIGHT_STICK)->on_press)
+  if(gamepad.get_button(PS4::RIGHT_STICK)->on_press())
     RCLCPP_INFO(this->get_logger(), "pressed RIGHT STICK");
 
   auto twist_stamped = geometry_msgs::msg::TwistStamped();
@@ -64,8 +64,8 @@ void Joystick::topic_callback(const sensor_msgs::msg::Joy& message) {
   twist_stamped.header.frame_id = "command_velocity";
   twist_stamped.header.stamp = this->now();
 
-  twist_stamped.twist.linear.x = gamepad.get_axis(hid_devices::GamepadAxis::LEFT_Y)->get() * max_tan;
-  twist_stamped.twist.angular.z = gamepad.get_axis(hid_devices::GamepadAxis::RIGHT_X)->get() * max_ang;
+  twist_stamped.twist.linear.x = gamepad.get_axis(GamepadAxis::LEFT_Y)->get() * max_tan;
+  twist_stamped.twist.angular.z = gamepad.get_axis(GamepadAxis::RIGHT_X)->get() * max_ang;
 
   publisher->publish(twist_stamped);
   

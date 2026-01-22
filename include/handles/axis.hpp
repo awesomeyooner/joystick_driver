@@ -16,11 +16,11 @@ class Axis
          * @brief Creates a new Axis Handle with the given universal ID
          * and index in the `joy_msg`
          * 
+         * @param index `int` - The index in the array of the `joy_msg`
          * @param id `int` - The Universal ID that this is associated with.
          * Refer to the `GamepadAxis` namespace
-         * @param index `int` - The index in the array of the `joy_msg`
          */
-        Axis(int id, int index);
+        Axis(int index, int id);
 
         /**
          * @brief Gets the current axis value

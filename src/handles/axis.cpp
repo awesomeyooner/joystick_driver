@@ -1,6 +1,7 @@
 #include "handles/axis.hpp"
 
-Axis::Axis(int id, int index) : m_universal_id(id), m_index_in_msg(index)
+Axis::Axis(int index, int id) : 
+    m_index_in_msg(index), m_universal_id(id)
 {
     // Default
     m_value = 0;

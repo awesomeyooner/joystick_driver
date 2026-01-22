@@ -19,12 +19,12 @@ class Button
          * @brief Creates a new button handle with the given universal ID
          * and index in the joy_msg
          * 
-         * @param id `int` - The Universal ID this corresponds to. Use
-         * the `GamepadButton` namespace
          * @param index `int` - The index in the `joy_msg` array this
          * corresponds to 
+         * @param id `int` - The Universal ID this corresponds to. Use
+         * the `GamepadButton` namespace
          */
-        Button(int id, int index);
+        Button(int index, int id);
 
         /**
          * @brief Gets the current state of the button.
@@ -81,7 +81,7 @@ class Button
          * @return int 
          */
         int get_index();
-        
+
 
     private:
 

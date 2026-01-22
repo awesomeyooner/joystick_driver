@@ -10,8 +10,8 @@
 #include "geometry_msgs/msg/twist.hpp"
 #include "geometry_msgs/msg/twist_stamped.hpp"
 
-#include "gamepad_interface.hpp"
-#include "constants.hpp"
+#include "handles/gamepad.hpp"
+#include "preconfigured_mappings.hpp"
 
 class Joystick : public rclcpp::Node
 {
@@ -27,7 +27,7 @@ class Joystick : public rclcpp::Node
         rclcpp::Subscription<sensor_msgs::msg::Joy>::SharedPtr subscription;
         rclcpp::Publisher<geometry_msgs::msg::TwistStamped>::SharedPtr publisher;
 
-        hid_devices::Gamepad gamepad;
+        Gamepad gamepad;
 
         double max_tan;
         double max_ang;
