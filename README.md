@@ -95,5 +95,5 @@ docker run \
   image:tag
 ```
 
-- `-v /dev/input:/dev/input` Will put a volume mount on input devices
+- `--volume /dev/input:/dev/input` Will put a volume mount on input devices
 - `--device-cgroup-rule='c 13:* rmw'` Will allow permission to use devices
