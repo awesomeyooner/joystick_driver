@@ -5,6 +5,21 @@
 # joystick_driver
 ROS 2 package that acts as an abstraction layer for the standard `joy` node
 
+## Prerequisites
+
+```bash
+# Install necessary components
+$ sudo apt install -y joystick \
+  jstest-gtk \
+  evtest
+
+# Run This to test every device
+$ sudo evtest
+
+# Run this and look for specific key words to find which event corresponds to your device
+$ cat /proc/bus/input/devices
+```
+
 ## Usage
 
 Please create a configuration `.yaml` file in the `\config` folder. Here is an example:
@@ -68,3 +83,17 @@ def generate_launch_description():
 ```
 
 and launch with `ros2 launch joystick_driver joystick.launch.py`
+
+## Usage with Docker
+
+When using docker, you can put a volume mount on all your input devices
+
+```bash
+docker run \
+  -v /dev/input:/dev/input \
+  --device-cgroup-rule='c 13:* rmw' \
+  image:tag
+```
+
+- `-v /dev/input:/dev/input` Will put a volume mount on input devices
+- `--device-cgroup-rule='c 13:* rmw'` Will allow permission to use devices
