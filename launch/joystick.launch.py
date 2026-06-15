@@ -10,22 +10,37 @@ from ament_index_python.packages import get_package_share_directory
 
 def generate_launch_description():
 
-    joy_params = os.path.join(get_package_share_directory('joystick_driver'),'config','joystick.yaml')
+    declared_arguments = []
 
-    return launch.LaunchDescription([
-        launch_ros.actions.Node(
-            package='joy',
-            executable='joy_node',
-            name='joy_node',
-            parameters=[joy_params]
-            ),
+    declared_arguments.append(
+        DeclareLaunchArgument(
+            "params_file",
+            default_value=os.path.join(get_package_share_directory('joystick_driver'),'config','joystick.yaml'),
+            description="The path to the YAML config file."
+        )
+    )
 
-        launch_ros.actions.Node(
-            package='joystick_driver',
-            executable='joystick_teleop',
-            name='joystick_teleop',
-            parameters=[joy_params]
-            )
+    joy_params = LaunchConfiguration("params_file")
 
-            #('/cmd_vel', '/diffbot_base_controller/cmd_vel')
-  ])
+    # Basic Joystick node
+    joy_node = Node(
+        package='joy',
+        executable='joy_node',
+        name='joy_node',
+        parameters=[joy_params]
+    )
+
+    # Driver node for twist and callbacks
+    driver_node = Node(
+        package='joystick_driver',
+        executable='joystick_teleop',
+        name='joystick_teleop',
+        parameters=[joy_params]
+    )
+
+    nodes = [
+        joy_node,
+        driver_node
+    ]
+
+    return LaunchDescription(declared_arguments + nodes)

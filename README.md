@@ -34,10 +34,14 @@ joy_node:
 joystick_teleop:
   ros__parameters:
     use_sim_time: true
-    joystick_type: "ps4" # implemented ones are: "ps4", "gamesir", "xbox" so far
+    joystick_type: "ps4" 
+    # implemented ones are: 
+    # "ps4"
+    # "gamesir"
+    # "xbox"
 
-    max_tangential_velocity: 1.0 # 1.0
-    max_angular_velocity: 3.14 # 3.14
+    max_tangential_velocity: 1.0 # m/s
+    max_angular_velocity: 3.14 # rad/s
 ```
 
 To launch, create a `.launch.py` file in the `\launch` folder
@@ -45,44 +49,57 @@ To launch, create a `.launch.py` file in the `\launch` folder
 `joystick.launch.py`
 
 ```python
-from launch import LaunchDescription
-from launch_ros.actions import Node
-from launch.substitutions import LaunchConfiguration
-from launch.actions import DeclareLaunchArgument
-import launch
-import launch_ros
-
 import os
+
 from ament_index_python.packages import get_package_share_directory
 
+from launch import LaunchDescription
+from launch.substitutions import LaunchConfiguration, Command
+from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription
+from launch_ros.actions import Node
+
+from launch import LaunchDescription
+from launch.actions import DeclareLaunchArgument, RegisterEventHandler
+from launch.conditions import IfCondition, UnlessCondition
+from launch.event_handlers import OnProcessExit
+from launch.substitutions import Command, FindExecutable, PathJoinSubstitution, LaunchConfiguration
+from launch.launch_description_sources import PythonLaunchDescriptionSource
+
+from launch_ros.actions import Node
+from launch_ros.substitutions import FindPackageShare
+
+import xacro
+
 def generate_launch_description():
+    
+    # CHANGE ME
+    package = "my_package"
 
-    joy_params = os.path.join(get_package_share_directory('joystick_driver'),'config','joystick.yaml')
+    # CHANGE ME
+    params_file = os.path.join(get_package_share_directory(package), 'config','joystick.yaml')
 
-    return launch.LaunchDescription([
+    launch_file = os.path.join(
+        get_package_share_directory("joystick_driver"),
+        "launch",
+        "joystick.launch.py"
+    )
 
-        # The base `joy` node
-        launch_ros.actions.Node(
-            package='joy',
-            executable='joy_node',
-            name='joy_node',
-            parameters=[joy_params]
-            ),
+    joystick_launch = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(launch_file),
+        launch_arguments={
+            "params_file": params_file
+        }.items()
+    )
 
-        # joystick driver node
-        launch_ros.actions.Node(
-            package='joystick_driver',
-            executable='joystick_teleop',
-            name='joystick_teleop',
-            parameters=[joy_params]
-            )
+    nodes = [
+        joystick_launch
+    ]
 
-            # If you want to change the mapping for the Twist message, use this line
-            #('/cmd_vel', '/diffbot_base_controller/cmd_vel')
-  ])
+    return LaunchDescription(nodes)
+
 ```
 
-and launch with `ros2 launch joystick_driver joystick.launch.py`
+and launch with `ros2 launch <my_package> joystick.launch.py`
 
 ## Usage with Docker
 
