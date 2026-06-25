@@ -15,6 +15,7 @@ set(THIS_PACKAGE_INCLUDE_DEPENDS
   ament_cmake
   sensor_msgs
   geometry_msgs
+  yaml-cpp
 )
 
 # Find each dependency
@@ -52,11 +53,10 @@ install(TARGETS
   DESTINATION lib/${PROJECT_NAME}
 )
 
-# Install Extra Folders
-install(DIRECTORY
-  launch
-  config
-  DESTINATION share/${PROJECT_NAME}/
+# Bringup (yaml configs, launch files)
+install(
+  DIRECTORY bringup/launch bringup/config
+  DESTINATION share/${PROJECT_NAME}
 )
 
 # Testing
