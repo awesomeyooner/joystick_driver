@@ -7,6 +7,7 @@ endif()
 
 # The Main Exec Name
 set(MAIN_EXEC joystick_teleop)
+set(MAPPINGS_EXEC create_mappings)
 
 # Create list of dependencies
 set(THIS_PACKAGE_INCLUDE_DEPENDS
@@ -35,9 +36,17 @@ set(SRC_FILES
   src/handles/gamepad.cpp
 )
 
+set(MAPPINGS_SRC
+    src/create_mappings.cpp
+)
+
 # Link the dependencies
 add_executable( ${MAIN_EXEC} ${SRC_FILES})
 ament_target_dependencies( ${MAIN_EXEC} PUBLIC ${THIS_PACKAGE_INCLUDE_DEPENDS})
+
+# Create executable for creating mappings On-The-Fly
+add_executable( ${MAPPINGS_EXEC} ${MAPPINGS_SRC} )
+ament_target_dependencies( ${MAPPINGS_EXEC} PUBLIC ${THIS_PACKAGE_INCLUDE_DEPENDS})
 
 # Add Include Directory
 target_include_directories( ${MAIN_EXEC} PUBLIC
@@ -50,6 +59,22 @@ target_include_directories( ${MAIN_EXEC} PUBLIC
 # Install Executable
 install(TARGETS
   ${MAIN_EXEC}
+  DESTINATION lib/${PROJECT_NAME}
+)
+
+# Do the same for the mappings exec
+
+# Add Include Directory
+target_include_directories( ${MAPPINGS_EXEC} PUBLIC
+  ${CMAKE_CURRENT_SOURCE_DIR}/include
+  $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
+  $<INSTALL_INTERFACE:include/${PROJECT_NAME}>
+  /opt/ros/humble/include/rclcpp
+)
+
+# Install Executable
+install(TARGETS
+  ${MAPPINGS_EXEC}
   DESTINATION lib/${PROJECT_NAME}
 )
 
