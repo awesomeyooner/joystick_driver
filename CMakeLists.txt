@@ -9,6 +9,8 @@ endif()
 set(MAIN_EXEC joystick_teleop)
 set(MAPPINGS_EXEC create_mappings)
 
+add_subdirectory(lib/plib)
+
 # Create list of dependencies
 set(THIS_PACKAGE_INCLUDE_DEPENDS
   rclcpp
@@ -54,6 +56,11 @@ target_include_directories( ${MAIN_EXEC} PUBLIC
   $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include/${PROJECT_NAME}>
   /opt/ros/humble/include/rclcpp
+)
+
+target_link_libraries( ${MAPPINGS_EXEC} PRIVATE
+    rclcpp::rclcpp
+    plib
 )
 
 # Install Executable
