@@ -1,0 +1,31 @@
+joystick_driver:
+
+  joystick_type: {
+    type: string,
+    default_value: "ps4",
+    description: "The type of mapping to use. Implemented ones are `ps4`, `gamesir`, `xbox`, and `switch`"
+  }
+
+  twist_frame_id: {
+    type: string,
+    default_value: "base_link",
+    description: "The name of the frame_id to use for the header of the TwistStamped message"
+  }
+
+  max_tangential_velocity: {
+    type: double,
+    default_value: 1.0,
+    description: "The max magnitude of the `Twist.linear.x` component" 
+  }
+
+  max_angular_velocity: {
+    type: double,
+    default_value: 1.0,
+    description: "The max magnitude of the `Twist.angular.z` component" 
+  }
+
+  my_int: {
+    type: int,
+    default_value: 0,
+    description: "Example Int Param"
+  }

@@ -14,18 +14,25 @@ add_subdirectory(lib/plib)
 # Create list of dependencies
 set(THIS_PACKAGE_INCLUDE_DEPENDS
   rclcpp
+  rclcpp_lifecycle
   std_msgs
   ament_cmake
   sensor_msgs
+  backward_ros
   geometry_msgs
   yaml-cpp
+  generate_parameter_library
 )
 
 # Find each dependency
-find_package(ament_cmake REQUIRED)
 foreach(Dependency IN ITEMS ${THIS_PACKAGE_INCLUDE_DEPENDS})
   find_package(${Dependency} REQUIRED)
 endforeach()
+
+# Generate Parameter Library
+generate_parameter_library( ${PROJECT_NAME}_parameters
+  src/parameters.yaml
+)
 
 set(SRC_FILES
   src/main.cpp
@@ -54,14 +61,25 @@ ament_target_dependencies( ${MAPPINGS_EXEC} PUBLIC ${THIS_PACKAGE_INCLUDE_DEPEND
 
 # Add Include Directory
 target_include_directories( ${MAIN_EXEC} PUBLIC
-  ${CMAKE_CURRENT_SOURCE_DIR}/include
-  $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
-  $<INSTALL_INTERFACE:include/${PROJECT_NAME}>
-  /opt/ros/humble/include/rclcpp
+    $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
+    $<INSTALL_INTERFACE:include/${PROJECT_NAME}>
+    $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/lib>
+    $<INSTALL_INTERFACE:lib>
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include>
+    $<BUILD_INTERFACE:/home/ubuntu/Documents/Polar-One/ros2_ws/build/joystick_driver/include>
+    /opt/ros/jazzy/include
+)
+
+target_link_libraries( ${MAIN_EXEC} PRIVATE
+    rclcpp::rclcpp
+    ${PROJECT_NAME}_parameters
+    plib
+    yaml-cpp::yaml-cpp
 )
 
 target_link_libraries( ${MAPPINGS_EXEC} PRIVATE
     rclcpp::rclcpp
+    ${PROJECT_NAME}_parameters
     plib
     yaml-cpp::yaml-cpp
 )
@@ -76,10 +94,12 @@ install(TARGETS
 
 # Add Include Directory
 target_include_directories( ${MAPPINGS_EXEC} PUBLIC
-  ${CMAKE_CURRENT_SOURCE_DIR}/include
-  $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
-  $<INSTALL_INTERFACE:include/${PROJECT_NAME}>
-  /opt/ros/humble/include/rclcpp
+    $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
+    $<INSTALL_INTERFACE:include/${PROJECT_NAME}>
+    $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/lib>
+    $<INSTALL_INTERFACE:lib>
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include>
+    /opt/ros/jazzy/include
 )
 
 # Install Executable

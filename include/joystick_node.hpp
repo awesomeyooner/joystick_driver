@@ -10,6 +10,8 @@
 #include "geometry_msgs/msg/twist.hpp"
 #include "geometry_msgs/msg/twist_stamped.hpp"
 
+#include <joystick_driver/joystick_driver_parameters.hpp>
+
 #include "handles/gamepad.hpp"
 #include "preconfigured_mappings.hpp"
 
@@ -22,16 +24,36 @@ class Joystick : public rclcpp::Node
 
     private:
 
+        /**
+         * @brief Updates the button and axis states given the incoming joystick message
+         * 
+         * @param message `const sensor_msgs::msg::Joy&`
+         */
         void topic_callback(const sensor_msgs::msg::Joy& message);
 
+        /**
+         * @brief Create a 2D TwistStamped message whose `linear.x` is the axis of `linear_axis` and whose
+         * `angular.z` is the axis of `angular_axis`. These are scaled with `max_tangential_velocity` and
+         * `max_angular_velocity` respectively.
+         * 
+         * @param linear_axis `int` The axis to use for populating the `linear.x` component
+         * @param angular_axis `int` The axis to use for populating the `angular.z` component
+         * @return `geometry_msgs::msg::TwistStamped` 
+         */
+        geometry_msgs::msg::TwistStamped create_twist(int linear_axis, int angular_axis);
+
+        // Generate Parameter Library
+        std::shared_ptr<joystick_driver::ParamListener> m_param_listener;
+        joystick_driver::Params m_params;
+
+        // Incoming Raw Joystick data
         rclcpp::Subscription<sensor_msgs::msg::Joy>::SharedPtr subscription;
+
+        // Twist Publisher
         rclcpp::Publisher<geometry_msgs::msg::TwistStamped>::SharedPtr publisher;
 
+        // Gamepad API
         Gamepad gamepad;
-
-        double max_tan;
-        double max_ang;
-
 
 }; // class Joystick : public rclcpp::Node
 
