@@ -44,6 +44,18 @@ joystick_teleop:
     max_angular_velocity: 3.14 # rad/s
 ```
 
+To create custom mappings, run the `joy_node` in one terminal then run the `create_mappings` node
+
+```bash
+# Run joy_node
+ros2 run joy joy_node
+
+# Run create_mappings
+ros2 run joystick_driver create_mappings
+```
+
+Then follow the steps on the terminal. This will create `joystick_mappings.yaml` in the current directory that you called the `ros2 run` command in. You could either copy paste the contents into your main `.yaml` file or just use that file as a whole.
+
 To launch, create a `.launch.py` file in the `\launch` folder
 
 `joystick.launch.py`

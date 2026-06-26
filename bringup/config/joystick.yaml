@@ -1,0 +1,26 @@
+joy_node:
+  ros__parameters:
+    deadzone: 0.05
+
+joystick_teleop:
+  ros__parameters:
+    use_sim_time: false
+    joystick_type: "ps4" # implemented ones are: "ps4", "gamesir", "xbox" so far
+
+    max_tangential_velocity: 1.0 # 1.0
+    max_angular_velocity: 3.14 # 3.14
+
+    bumper_left: 9
+    bumper_right: 10
+    button_down: 0
+    button_left: 2
+    button_left_stick: 7
+    button_right: 1
+    button_right_stick: 8
+    button_up: 3
+    stick_left_x: 0
+    stick_left_y: 1
+    stick_right_x: 2
+    stick_right_y: 3
+    trigger_left: 4
+    trigger_right: 5

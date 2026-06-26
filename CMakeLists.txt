@@ -7,26 +7,38 @@ endif()
 
 # The Main Exec Name
 set(MAIN_EXEC joystick_teleop)
+set(MAPPINGS_EXEC create_mappings)
+
+add_subdirectory(lib/plib)
 
 # Create list of dependencies
 set(THIS_PACKAGE_INCLUDE_DEPENDS
   rclcpp
+  rclcpp_lifecycle
   std_msgs
   ament_cmake
   sensor_msgs
+  backward_ros
   geometry_msgs
+  ament_index_cpp
+  yaml-cpp
+  generate_parameter_library
 )
 
 # Find each dependency
-find_package(ament_cmake REQUIRED)
 foreach(Dependency IN ITEMS ${THIS_PACKAGE_INCLUDE_DEPENDS})
   find_package(${Dependency} REQUIRED)
 endforeach()
 
+# Generate Parameter Library
+generate_parameter_library( ${PROJECT_NAME}_parameters
+  src/parameters.yaml
+)
+
 set(SRC_FILES
   src/main.cpp
 
-  src/joystick_node.cpp
+  src/nodes/joystick_node.cpp
 
   src/handles/axis.cpp
   src/handles/button.cpp
@@ -34,16 +46,43 @@ set(SRC_FILES
   src/handles/gamepad.cpp
 )
 
+set(MAPPINGS_SRC
+    src/mappings_main.cpp
+
+    src/nodes/mapping_node.cpp
+)
+
 # Link the dependencies
 add_executable( ${MAIN_EXEC} ${SRC_FILES})
 ament_target_dependencies( ${MAIN_EXEC} PUBLIC ${THIS_PACKAGE_INCLUDE_DEPENDS})
 
+# Create executable for creating mappings On-The-Fly
+add_executable( ${MAPPINGS_EXEC} ${MAPPINGS_SRC} )
+ament_target_dependencies( ${MAPPINGS_EXEC} PUBLIC ${THIS_PACKAGE_INCLUDE_DEPENDS})
+
 # Add Include Directory
 target_include_directories( ${MAIN_EXEC} PUBLIC
-  ${CMAKE_CURRENT_SOURCE_DIR}/include
-  $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
-  $<INSTALL_INTERFACE:include/${PROJECT_NAME}>
-  /opt/ros/humble/include/rclcpp
+    $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
+    $<INSTALL_INTERFACE:include/${PROJECT_NAME}>
+    $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/lib>
+    $<INSTALL_INTERFACE:lib>
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include>
+    $<BUILD_INTERFACE:/home/ubuntu/Documents/Polar-One/ros2_ws/build/joystick_driver/include>
+    /opt/ros/jazzy/include
+)
+
+target_link_libraries( ${MAIN_EXEC} PRIVATE
+    rclcpp::rclcpp
+    ${PROJECT_NAME}_parameters
+    plib
+    yaml-cpp::yaml-cpp
+)
+
+target_link_libraries( ${MAPPINGS_EXEC} PRIVATE
+    rclcpp::rclcpp
+    ${PROJECT_NAME}_parameters
+    plib
+    yaml-cpp::yaml-cpp
 )
 
 # Install Executable
@@ -52,11 +91,28 @@ install(TARGETS
   DESTINATION lib/${PROJECT_NAME}
 )
 
-# Install Extra Folders
-install(DIRECTORY
-  launch
-  config
-  DESTINATION share/${PROJECT_NAME}/
+# Do the same for the mappings exec
+
+# Add Include Directory
+target_include_directories( ${MAPPINGS_EXEC} PUBLIC
+    $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
+    $<INSTALL_INTERFACE:include/${PROJECT_NAME}>
+    $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/lib>
+    $<INSTALL_INTERFACE:lib>
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include>
+    /opt/ros/jazzy/include
+)
+
+# Install Executable
+install(TARGETS
+  ${MAPPINGS_EXEC}
+  DESTINATION lib/${PROJECT_NAME}
+)
+
+# Bringup (yaml configs, launch files)
+install(
+  DIRECTORY bringup/launch bringup/config
+  DESTINATION share/${PROJECT_NAME}
 )
 
 # Testing

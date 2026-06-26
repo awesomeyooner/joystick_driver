@@ -1,0 +1,116 @@
+joystick_driver:
+
+  twist_topic: {
+    type: string,
+    default_value: "cmd_vel",
+    description: "The topic to publish the TwistStamped messages to"
+  }
+
+  joystick_type: {
+    type: string,
+    default_value: "none",
+    description: "The type of mapping to use. Implemented ones are `ps4`, `gamesir`, `xbox`, and `switch`"
+  }
+
+  twist_frame_id: {
+    type: string,
+    default_value: "base_link",
+    description: "The name of the frame_id to use for the header of the TwistStamped message"
+  }
+
+  max_tangential_velocity: {
+    type: double,
+    default_value: 1.0,
+    description: "The max magnitude of the `Twist.linear.x` component" 
+  }
+
+  max_angular_velocity: {
+    type: double,
+    default_value: 1.0,
+    description: "The max magnitude of the `Twist.angular.z` component" 
+  }
+
+  # Button Mapping params
+  bumper_left: {
+    type: int,
+    default_value: 9,
+    description: "The index in the `joy_msg` for the Left Bumper of a controller"
+  }
+
+  bumper_right: {
+    type: int,
+    default_value: 10,
+    description: "The index in the `joy_msg` for the Right Bumper of a controller"
+  }
+
+  button_down: {
+    type: int,
+    default_value: 0,
+    description: "The index in the `joy_msg` for the Down button of a controller"
+  }
+
+  button_left: {
+    type: int,
+    default_value: 2,
+    description: "The index in the `joy_msg` for the Left button of a controller"
+  }
+
+  button_left_stick: {
+    type: int,
+    default_value: 7,
+    description: "The index in the `joy_msg` for the Left Stick button of a controller"
+  }
+
+  button_right: {
+    type: int,
+    default_value: 1,
+    description: "The index in the `joy_msg` for the Right button of a controller"
+  }
+
+  button_right_stick: {
+    type: int,
+    default_value: 8,
+    description: "The index in the `joy_msg` for the Right Stick button of a controller"
+  }
+
+  button_up: {
+    type: int,
+    default_value: 3,
+    description: "The index in the `joy_msg` for the Up button of a controller"
+  }
+
+  stick_left_x: {
+    type: int,
+    default_value: 0,
+    description: "The index in the `joy_msg` for the Left Stick X axis of a controller"
+  }
+
+  stick_left_y: {
+    type: int,
+    default_value: 1,
+    description: "The index in the `joy_msg` for the Left Stick Y axis of a controller"
+  }
+
+  stick_right_x: {
+    type: int,
+    default_value: 2,
+    description: "The index in the `joy_msg` for the Right Stick X axis of a controller"
+  }
+
+  stick_right_y: {
+    type: int,
+    default_value: 3,
+    description: "The index in the `joy_msg` for the Right Stick Y axis of a controller"
+  }
+
+  trigger_left: {
+    type: int,
+    default_value: 4,
+    description: "The index in the `joy_msg` for the Left Trigger axis of a controller"
+  }
+
+  trigger_right: {
+    type: int,
+    default_value: 5,
+    description: "The index in the `joy_msg` for the Right Trigger axis of a controller"
+  }

@@ -12,6 +12,10 @@
   <depend>std_msgs</depend>
   <depend>sensor_msgs</depend>
   <depend>geometry_msgs</depend>
+  <depend>yaml-cpp</depend>
+  <depend>ament_index_cpp</depend>
+  <depend>rclcpp_lifecycle</depend>
+  <depend>generate_parameter_library</depend>
 
   <exec_depend>joint_state_publisher</exec_depend>
   <exec_depend>robot_localization</exec_depend>
@@ -21,6 +25,8 @@
 
   <test_depend>ament_lint_auto</test_depend>
   <test_depend>ament_lint_common</test_depend>
+
+  <member_of_group>rosidl_interface_packages</member_of_group>
 
   <export>
     <build_type>ament_cmake</build_type>
