@@ -10,9 +10,6 @@ joystick_teleop:
     max_tangential_velocity: 1.0 # 1.0
     max_angular_velocity: 3.14 # 3.14
 
-    # max_tangential_velocity: 1.0 # 1.0
-    # max_angular_velocity: 1.0 # 3.14
-
     bumper_left: 9
     bumper_right: 10
     button_down: 0

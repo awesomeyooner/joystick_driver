@@ -8,7 +8,7 @@ joystick_driver:
 
   joystick_type: {
     type: string,
-    default_value: "ps4",
+    default_value: "none",
     description: "The type of mapping to use. Implemented ones are `ps4`, `gamesir`, `xbox`, and `switch`"
   }
 

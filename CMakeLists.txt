@@ -20,6 +20,7 @@ set(THIS_PACKAGE_INCLUDE_DEPENDS
   sensor_msgs
   backward_ros
   geometry_msgs
+  ament_index_cpp
   yaml-cpp
   generate_parameter_library
 )

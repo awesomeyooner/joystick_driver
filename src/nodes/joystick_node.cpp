@@ -15,10 +15,25 @@ JoystickNode::JoystickNode() : Node("joystick_teleop")
     m_param_listener = std::make_shared<ParamListener>(this);
     m_params = m_param_listener->get_params();
 
-    // Assign the mapping to the Gamepad API
-    gamepad.initialize(
-        get_mapping()
-    );
+    // If the user specified a preset joystick_type
+    // Then use that mapping
+    if(m_params.joystick_type != "none")
+    {
+        RCLCPP_INFO(this->get_logger(), "Using preset file for mappings");
+
+        gamepad.initialize(
+            get_mapping_from_yaml(m_params.joystick_type + ".yaml")
+        );
+    }
+    // If not then fallback to the explicit mapping
+    else
+    {
+        RCLCPP_INFO(this->get_logger(), "Using custom mappings");
+        // Assign the ROS Params mapping to the Gamepad API
+        gamepad.initialize(
+            get_mapping()
+        );
+    }
 
     // Create the TwistStamped publisher
     publisher = this->create_publisher<TwistStamped>(m_params.twist_topic, SystemDefaultsQoS());
@@ -123,3 +138,45 @@ GamepadMapping JoystickNode::get_mapping()
     return mapping;
 
 } // end of "get_mapping()"
+
+
+GamepadMapping JoystickNode::get_mapping_from_yaml(string filename)
+{
+    string share_folder = ament_index_cpp::get_package_share_directory("joystick_driver");
+
+    filesystem::path config_path = filesystem::path(share_folder) / "config" / filename;
+
+    YAML::Node contents = YAML::LoadFile(config_path.string());
+
+    auto params = contents[get_name()]["ros__parameters"];
+
+    // Populate the actual mapping object
+    GamepadMapping mapping;
+    
+    // Bumpers
+    mapping.bumper_left =   params["bumper_left"].as<int>();
+    mapping.bumper_right =  params["bumper_right"].as<int>();
+
+    // Buttons
+    mapping.button_up =     params["button_up"].as<int>();
+    mapping.button_down =   params["button_down"].as<int>();
+    mapping.button_left =   params["button_left"].as<int>();
+    mapping.button_right =  params["button_right"].as<int>();
+
+    // Joystick Buttons (click)
+    mapping.button_left_stick =     params["button_left_stick"].as<int>();
+    mapping.button_right_stick =    params["button_right_stick"].as<int>();
+
+    // Joystick Axes
+    mapping.stick_left_x =  params["stick_left_x"].as<int>();
+    mapping.stick_left_y =  params["stick_left_y"].as<int>();
+    mapping.stick_right_x = params["stick_right_x"].as<int>();
+    mapping.stick_right_y = params["stick_right_y"].as<int>();
+
+    // Trigger Axes
+    mapping.trigger_left =  params["trigger_left"].as<int>();
+    mapping.trigger_right = params["trigger_right"].as<int>();
+
+    return mapping;
+
+} // end of "get_mapping_from_yaml(string)"
