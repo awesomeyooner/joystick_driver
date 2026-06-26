@@ -22,21 +22,38 @@
 #include "plib/util/logger.hpp"
 
 
+enum class PromptState
+{
+    BUTTONS,
+    AXES
+
+}; // enum class PromptState
+
+
 class MappingNode : public rclcpp::Node
 {
 
     public:
 
+        /**
+         * @brief Initializes the node
+         * 
+         */
         MappingNode();
 
+        /**
+         * @brief Creates a .yaml file whose contents are the maps 
+         * `button_mappings` and `axis_mappings` 
+         * 
+         * @return `status_utils::StatusCode` `OK` if file made successfully, `FAILED` otherwise 
+         */
         status_utils::StatusCode create_file();
 
         status_utils::StatusCode topic_callback(const sensor_msgs::msg::Joy& message);
 
     private:
 
-        const std::string NODE_NAME = "create_mappings";
-
+        // List of all button bindings to ask for
         const std::vector<std::string> button_prompts = {
             "button_up",
             "button_down",
@@ -50,6 +67,7 @@ class MappingNode : public rclcpp::Node
             "button_right_stick"
         };
 
+        // List of all axis bindings to ask for
         const std::vector<std::string> axes_prompts = {
             "stick_left_x",
             "stick_left_x",
@@ -69,21 +87,23 @@ class MappingNode : public rclcpp::Node
         // to be considered active
         const float ACTIVE_AXIS_THRESHOLD = 0.90;
 
+        // The resting state of the controller to use for comparison
         std::vector<int> initial_button_states;
         std::vector<float> initial_axis_states;
 
-        bool prompting_buttons = true;
+        PromptState prompt_state = PromptState::BUTTONS;
 
-        bool prompt_sent = false;
+        // If we are currently waiting for input (if we've already sent the prompt)
+        bool waiting_for_input = false;
 
         rclcpp::Subscription<sensor_msgs::msg::Joy>::SharedPtr subscription;
 
+        // The current maps in the form of {map_name, index}
+        // Example: `{bumper_left, 9}`
         std::map<std::string, int> button_mappings;
         std::map<std::string, int> axis_mappings;
 
         std::string get_current_prompt();
-
-        bool contains(std::string key);
 
         std::vector<int> get_active_buttons(const std::vector<int>& button_states, const std::map<std::string, int>& excluding = std::map<std::string, int>{});
 

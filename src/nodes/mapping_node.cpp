@@ -38,32 +38,40 @@ StatusCode MappingNode::topic_callback(const sensor_msgs::msg::Joy& msg)
         return StatusCode::OK;
     }
 
-    if(!prompt_sent)
+    if(!waiting_for_input)
     {
         Logger::info("Please activate: " + current_prompt);
-        prompt_sent = true;
+        waiting_for_input = true;
     }
 
-    if(prompting_buttons)
+    switch(prompt_state)
     {
-        vector<int> active_buttons = get_active_buttons(msg.buttons, button_mappings);
+        case PromptState::BUTTONS:
+        {
 
-        if(active_buttons.size() != 1)
-            return StatusCode::OK;
+            vector<int> active_buttons = get_active_buttons(msg.buttons, button_mappings);
 
-        button_mappings.insert({current_prompt, active_buttons.at(0)});
+            if(active_buttons.size() != 1)
+                return StatusCode::OK;
+
+            button_mappings.insert({current_prompt, active_buttons.at(0)});
+
+            break;
+        }
+
+        case PromptState::AXES:
+        {
+            vector<int> active_axes = get_active_axes(msg.axes, axis_mappings);
+
+            if(active_axes.size() != 1)
+                return StatusCode::OK;
+
+            axis_mappings.insert({current_prompt, active_axes.at(0)});
+            break;
+        }
     }
-    else
-    {
-        vector<int> active_axes = get_active_axes(msg.axes, axis_mappings);
 
-        if(active_axes.size() != 1)
-            return StatusCode::OK;
-
-        axis_mappings.insert({current_prompt, active_axes.at(0)});
-    }
-    
-    prompt_sent = false;
+    waiting_for_input = false;
 
     return StatusCode::OK;
 
@@ -72,7 +80,7 @@ StatusCode MappingNode::topic_callback(const sensor_msgs::msg::Joy& msg)
 
 StatusCode MappingNode::create_file()
 {
-    Logger::info("Preparing to create .yaml file...");
+    Logger::info("Preparing to create joystick_mappings.yaml file...");
 
     YAML::Emitter yaml_out;
     ofstream output_file("joystick_mappings.yaml");
@@ -84,18 +92,22 @@ StatusCode MappingNode::create_file()
         return StatusCode::FAILED;
     }
 
+    // Create one map to work with YAML
     map<string, int> mappings = button_mappings;
     mappings.merge(axis_mappings);
 
     yaml_out << YAML::BeginMap;
-    yaml_out << YAML::Key << NODE_NAME;
+    yaml_out << YAML::Key << "joystick_teleop";
         yaml_out << YAML::Value << YAML::BeginMap;
         yaml_out << YAML::Key << "ros__parameters";
             yaml_out << mappings;
         yaml_out << YAML::EndMap;
     yaml_out << YAML::EndMap;
 
+    // Write to the file
     output_file << yaml_out.c_str();
+
+    output_file.close();
 
     Logger::info("Successfully created .yaml file!");
     
@@ -118,7 +130,7 @@ string MappingNode::get_current_prompt()
     }
 
     // If code gets here, then all buttom prompts are set
-    prompting_buttons = false;
+    prompt_state = PromptState::AXES;
 
     for(string prompt : axes_prompts)
     {
