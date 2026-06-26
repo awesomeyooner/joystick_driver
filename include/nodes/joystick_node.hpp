@@ -15,12 +15,12 @@
 #include "handles/gamepad.hpp"
 #include "preconfigured_mappings.hpp"
 
-class Joystick : public rclcpp::Node
+class JoystickNode : public rclcpp::Node
 {
 
     public:
 
-        Joystick();
+        JoystickNode();
 
     private:
 
@@ -62,7 +62,7 @@ class Joystick : public rclcpp::Node
         // Gamepad API
         Gamepad gamepad;
 
-}; // class Joystick : public rclcpp::Node
+}; // class JoystickNode : public rclcpp::Node
 
 
 #endif // JOYSTICK_NODE_HPP

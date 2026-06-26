@@ -8,14 +8,8 @@ using namespace std;
 using TwistStamped = geometry_msgs::msg::TwistStamped;
 using Joy = sensor_msgs::msg::Joy;
 
-//0 left x 
-//1 left y
-//2 left trigger
 
-//3 right x
-//4 right y
-//5 right trigger
-Joystick::Joystick() : Node("joystick_teleop")
+JoystickNode::JoystickNode() : Node("joystick_teleop")
 {
     // Initialize the parameters
     m_param_listener = std::make_shared<ParamListener>(this);
@@ -33,13 +27,13 @@ Joystick::Joystick() : Node("joystick_teleop")
     subscription = this->create_subscription<Joy>(
         "joy", 
         SystemDefaultsQoS(), 
-        bind(&Joystick::topic_callback, this, _1)
+        bind(&JoystickNode::topic_callback, this, _1)
     );
 
-} // end of "Joystick()"
+} // end of "JoystickNode()"
 
 
-void Joystick::topic_callback(const Joy& message) {
+void JoystickNode::topic_callback(const Joy& message) {
 
     gamepad.update(message);
 
@@ -81,7 +75,7 @@ void Joystick::topic_callback(const Joy& message) {
 } // end of "topic_callback(const Joy&)"
 
 
-TwistStamped Joystick::create_twist(int linear_axis, int angular_axis)
+TwistStamped JoystickNode::create_twist(int linear_axis, int angular_axis)
 {
     TwistStamped twist_stamped = TwistStamped();
 
@@ -98,7 +92,7 @@ TwistStamped Joystick::create_twist(int linear_axis, int angular_axis)
 } // end of "create_twist(int, int)"
 
 
-GamepadMapping Joystick::get_mapping()
+GamepadMapping JoystickNode::get_mapping()
 {
     GamepadMapping mapping;
 
