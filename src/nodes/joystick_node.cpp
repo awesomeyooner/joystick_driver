@@ -1,4 +1,4 @@
-#include "joystick_node.hpp"
+#include "nodes/joystick_node.hpp"
 
 using std::placeholders::_1;
 using namespace joystick_driver;

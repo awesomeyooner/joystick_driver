@@ -1,4 +1,4 @@
-#include "mapping_node.hpp"
+#include "nodes/mapping_node.hpp"
 
 
 using namespace std;

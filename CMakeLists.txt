@@ -37,7 +37,7 @@ generate_parameter_library( ${PROJECT_NAME}_parameters
 set(SRC_FILES
   src/main.cpp
 
-  src/joystick_node.cpp
+  src/nodes/joystick_node.cpp
 
   src/handles/axis.cpp
   src/handles/button.cpp
@@ -48,7 +48,7 @@ set(SRC_FILES
 set(MAPPINGS_SRC
     src/mappings_main.cpp
 
-    src/mapping_node.cpp
+    src/nodes/mapping_node.cpp
 )
 
 # Link the dependencies

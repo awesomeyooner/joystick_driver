@@ -6,11 +6,7 @@
 #include "geometry_msgs/msg/twist.hpp"
 #include "geometry_msgs/msg/twist_stamped.hpp"
 
-#include "mapping_node.hpp"
-
-
-using namespace rclcpp;
-using namespace status_utils;
+#include "nodes/mapping_node.hpp"
 
 
 int main(int argc, char* argv[])
@@ -24,4 +20,5 @@ int main(int argc, char* argv[])
     rclcpp::shutdown();
 
     return 0;
-}
+
+} // end of "main(int, char*)"

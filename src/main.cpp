@@ -6,12 +6,19 @@
 #include "geometry_msgs/msg/twist.hpp"
 #include "geometry_msgs/msg/twist_stamped.hpp"
 
-#include "joystick_node.hpp"
+#include "nodes/joystick_node.hpp"
 
-int main(int argc, char * argv[])
+
+int main(int argc, char* argv[])
 {
-  rclcpp::init(argc, argv);
-  rclcpp::spin(std::make_shared<Joystick>());
-  rclcpp::shutdown();
-  return 0;
-}
+    rclcpp::init(argc, argv);
+
+    auto node = std::make_shared<Joystick>();
+
+    rclcpp::spin(node);
+
+    rclcpp::shutdown();
+    
+    return 0;
+
+} // end of main(int, char*)
