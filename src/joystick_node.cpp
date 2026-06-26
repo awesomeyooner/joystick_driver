@@ -17,24 +17,27 @@ using Joy = sensor_msgs::msg::Joy;
 //5 right trigger
 Joystick::Joystick() : Node("joystick_teleop")
 {
+    // Initialize the parameters
     m_param_listener = std::make_shared<ParamListener>(this);
     m_params = m_param_listener->get_params();
 
-    if(m_params.joystick_type == "ps4")
-      gamepad.initialize(PS4::MAP);
-    else if(m_params.joystick_type == "xbox")
-      gamepad.initialize(Xbox::MAP);
-    else if(m_params.joystick_type == "gamesir")
-      gamepad.initialize(GameSir::MAP);
+    // Assign the mapping to the Gamepad API
+    gamepad.initialize(
+        get_mapping()
+    );
 
-    publisher = this->create_publisher<TwistStamped>("cmd_vel", SystemDefaultsQoS());
+    // Create the TwistStamped publisher
+    publisher = this->create_publisher<TwistStamped>(m_params.twist_topic, SystemDefaultsQoS());
 
+    // Create the raw joystick subscriber
     subscription = this->create_subscription<Joy>(
         "joy", 
         SystemDefaultsQoS(), 
         bind(&Joystick::topic_callback, this, _1)
     );
-}
+
+} // end of "Joystick()"
+
 
 void Joystick::topic_callback(const Joy& message) {
 
@@ -67,6 +70,7 @@ void Joystick::topic_callback(const Joy& message) {
     if(gamepad.get_button(PS4::RIGHT_BUMPER)->on_press())
         RCLCPP_INFO(this->get_logger(), "pressed RIGHT BUMPER");
 
+    // Publish the TwistStamped message
     publisher->publish(
         create_twist(
             GamepadAxis::LEFT_Y, 
@@ -74,7 +78,7 @@ void Joystick::topic_callback(const Joy& message) {
         )
     );
     
-}
+} // end of "topic_callback(const Joy&)"
 
 
 TwistStamped Joystick::create_twist(int linear_axis, int angular_axis)
@@ -92,3 +96,36 @@ TwistStamped Joystick::create_twist(int linear_axis, int angular_axis)
     return twist_stamped;
 
 } // end of "create_twist(int, int)"
+
+
+GamepadMapping Joystick::get_mapping()
+{
+    GamepadMapping mapping;
+
+    // Bumpers
+    mapping.bumper_left =   m_params.bumper_left;
+    mapping.bumper_right =  m_params.bumper_right;
+
+    // Buttons
+    mapping.button_up =     m_params.button_up;
+    mapping.button_down =   m_params.button_down;
+    mapping.button_left =   m_params.button_left;
+    mapping.button_right =  m_params.button_right;
+
+    // Joystick Buttons (click)
+    mapping.button_left_stick =     m_params.button_left_stick;
+    mapping.button_right_stick =    m_params.button_right_stick;
+
+    // Joystick Axes
+    mapping.stick_left_x =  m_params.stick_left_x;
+    mapping.stick_left_y =  m_params.stick_left_y;
+    mapping.stick_right_x = m_params.stick_right_x;
+    mapping.stick_right_y = m_params.stick_right_y;
+
+    // Trigger Axes
+    mapping.trigger_left =  m_params.trigger_left;
+    mapping.trigger_right = m_params.trigger_right;
+
+    return mapping;
+
+} // end of "get_mapping()"

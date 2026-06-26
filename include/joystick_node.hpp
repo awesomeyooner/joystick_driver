@@ -42,6 +42,13 @@ class Joystick : public rclcpp::Node
          */
         geometry_msgs::msg::TwistStamped create_twist(int linear_axis, int angular_axis);
 
+        /**
+         * @brief Get the `GamepadMapping` object from the given ROS parameters
+         * 
+         * @return `GamepadMapping` 
+         */
+        GamepadMapping get_mapping();
+
         // Generate Parameter Library
         std::shared_ptr<joystick_driver::ParamListener> m_param_listener;
         joystick_driver::Params m_params;

@@ -3,7 +3,8 @@
 
 
  // Universal Button ID
-enum GamepadButton{
+enum GamepadButton
+{
     ACTION_DOWN = 0,
     ACTION_RIGHT = 1,
     ACTION_LEFT = 2,
@@ -14,10 +15,13 @@ enum GamepadButton{
 
     LEFT_STICK = 6,
     RIGHT_STICK = 7
-};
+
+}; // enum GamepadButton
+
 
 // Universal Axis ID
-enum GamepadAxis{
+enum GamepadAxis
+{
     LEFT_X = 0,
     LEFT_Y = 1,
     RIGHT_X = 2,
@@ -25,7 +29,8 @@ enum GamepadAxis{
 
     LEFT_TRIGGER = 4,
     RIGHT_TRIGGER = 5
-};
+
+}; // enum GamepadAxis
 
 
 #endif // UNIVERSAL_IDS_HPP

@@ -11,7 +11,7 @@ Gamepad::Gamepad(GamepadMapping mapping)
 void Gamepad::initialize(GamepadMapping mapping)
 {
     // Initialze the status struct
-    m_status = GamepadMapping(mapping);
+    m_status = GamepadStatus(mapping);
 
     // Configure the axes map
     m_axes[m_status.m_stick_left_x.get_id()] = &m_status.m_stick_left_x;
