@@ -1,0 +1,17 @@
+joystick_teleop:
+  ros__parameters:
+    bumper_left: 5
+    bumper_right: 6
+    button_down: 0
+    button_left: 3
+    button_left_stick: 12
+    button_right: 1
+    button_right_stick: 13
+    button_up: 2
+    stick_left_x: 0
+    stick_left_y: 1
+    stick_right_x: 2
+    stick_right_y: 3
+    # Triggers need work...
+    trigger_left: 0
+    trigger_right: 1
