@@ -39,7 +39,9 @@ set(SRC_FILES
 )
 
 set(MAPPINGS_SRC
-    src/create_mappings.cpp
+    src/mappings_main.cpp
+
+    src/mapping_node.cpp
 )
 
 # Link the dependencies
@@ -61,6 +63,7 @@ target_include_directories( ${MAIN_EXEC} PUBLIC
 target_link_libraries( ${MAPPINGS_EXEC} PRIVATE
     rclcpp::rclcpp
     plib
+    yaml-cpp::yaml-cpp
 )
 
 # Install Executable
