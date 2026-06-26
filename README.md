@@ -47,10 +47,10 @@ joystick_teleop:
 To create custom mappings, run the `joy_node` in one terminal then run the `create_mappings` node
 
 ```bash
-# Launch joy_node
+# Run joy_node
 ros2 run joy joy_node
 
-# Launch create_mappings
+# Run create_mappings
 ros2 run joystick_driver create_mappings
 ```
 
