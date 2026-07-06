@@ -78,9 +78,6 @@ void JoystickNode::topic_callback(const Joy& message) {
     if(gamepad.get_button(GamepadButton::RIGHT_BUMPER)->on_press())
         RCLCPP_INFO(this->get_logger(), "pressed RIGHT BUMPER");
 
-    if(gamepad.get_button(GamepadButton::LEFT_TRIGGER)->on_press())
-        RCLCPP_INFO(this->get_logger(), "pressed LEFT TRIGGER");
-
     // Publish the TwistStamped message
     publisher->publish(
         create_twist(
