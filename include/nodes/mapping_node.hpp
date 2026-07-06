@@ -25,7 +25,8 @@
 enum class PromptState
 {
     BUTTONS,
-    AXES
+    AXES,
+    DYNAMIC
 
 }; // enum class PromptState
 
@@ -72,10 +73,15 @@ class MappingNode : public rclcpp::Node
             "stick_left_x",
             "stick_left_y",
             "stick_right_x",
-            "stick_right_y",
+            "stick_right_y"
+        };
 
+        // List of the trigger bindings to ask for
+        // This is separate because triggers could be either
+        // buttons or axes
+        const std::vector<std::string> dynamic_prompts = {
             "trigger_left",
-            "trigger_right"
+            "trigger_right",
         };
 
         // How big the change-of-states needs to be for a button
@@ -94,6 +100,9 @@ class MappingNode : public rclcpp::Node
 
         // If we are currently waiting for input (if we've already sent the prompt)
         bool waiting_for_input = false;
+
+        // True if triggers are buttons. False if they are axes
+        bool triggers_as_buttons = false;
 
         rclcpp::Subscription<sensor_msgs::msg::Joy>::SharedPtr subscription;
 

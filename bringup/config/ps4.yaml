@@ -1,5 +1,6 @@
 joystick_teleop:
   ros__parameters:
+    use_triggers_as_buttons: false
     bumper_left: 9
     bumper_right: 10
     button_down: 0

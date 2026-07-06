@@ -69,6 +69,29 @@ StatusCode MappingNode::topic_callback(const sensor_msgs::msg::Joy& msg)
             axis_mappings.insert({current_prompt, active_axes.at(0)});
             break;
         }
+
+        case PromptState::DYNAMIC:
+        {
+            vector<int> active_axes = get_active_axes(msg.axes, axis_mappings);
+            vector<int> active_buttons = get_active_buttons(msg.buttons, button_mappings);
+
+            // If there's NOT only one active action
+            // Then return
+            if(active_axes.size() + active_buttons.size() != 1)
+                return StatusCode::OK;
+
+            if(active_axes.size() == 1)
+            {
+                axis_mappings.insert({current_prompt, active_axes.at(0)});
+            }
+            else if(active_buttons.size() == 1)
+            {
+                button_mappings.insert({current_prompt, active_buttons.at(0)});
+                triggers_as_buttons = true;
+            }
+
+            break;
+        }
     }
 
     waiting_for_input = false;
@@ -96,12 +119,31 @@ StatusCode MappingNode::create_file()
     map<string, int> mappings = button_mappings;
     mappings.merge(axis_mappings);
 
+    // Begin joystick_teleop
     yaml_out << YAML::BeginMap;
-    yaml_out << YAML::Key << "joystick_teleop";
-        yaml_out << YAML::Value << YAML::BeginMap;
-        yaml_out << YAML::Key << "ros__parameters";
-            yaml_out << mappings;
+    yaml_out << YAML::Key << "joystick_teleop" << YAML::Value;
+
+        // Begin ros__parameters
+        yaml_out << YAML::BeginMap;
+        yaml_out << YAML::Key << "ros__parameters" << YAML::Value;
+
+            yaml_out << YAML::BeginMap;
+                yaml_out << YAML::Key << "use_triggers_as_buttons";
+                yaml_out << YAML::Value << triggers_as_buttons;
+
+                // Manually enter map because normal << needs a parent
+                for(const auto& [key, value] : mappings)
+                {
+                    yaml_out << YAML::Key << key;
+                    yaml_out << YAML::Value << value;
+                }
+
+            yaml_out << YAML::EndMap;
+            
+        // End ros__parameters
         yaml_out << YAML::EndMap;
+    
+    // End joystick_teleop
     yaml_out << YAML::EndMap;
 
     // Write to the file
@@ -135,6 +177,24 @@ string MappingNode::get_current_prompt()
     for(string prompt : axes_prompts)
     {
         // If this prompt was already set
+        // Then skip it
+        if(axis_mappings.count(prompt) == 1)
+            continue;
+
+        return prompt;
+    }
+
+    // If code gets here, then all buttom and axis prompts are set
+    prompt_state = PromptState::DYNAMIC;
+
+    for(string prompt : dynamic_prompts)
+    {
+        // If this prompt was already set in buttons
+        // Then skip it
+        if(button_mappings.count(prompt) == 1)
+            continue;
+
+        // If this prompt was already set in axes
         // Then skip it
         if(axis_mappings.count(prompt) == 1)
             continue;

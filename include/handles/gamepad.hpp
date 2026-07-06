@@ -26,8 +26,10 @@ class Gamepad
          * 
          * @param mapping `GamepadMapping` - The mapping this gamepad is
          * associated with
+         * @param triggers_as_buttons `bool` - True if triggers are buttons. False if 
+         * they are axes
          */
-        Gamepad(GamepadMapping mapping);
+        Gamepad(GamepadMapping mapping, bool triggers_as_buttons = false);
 
         /**
          * @brief Assigns each button and axis to their corresponding 
@@ -35,8 +37,10 @@ class Gamepad
          * 
          * @param mapping `GamepadMapping` - The mapping this gamepad is
          * associated with
+         * @param triggers_as_buttons `bool` - True if triggers are buttons. False if 
+         * they are axes
          */
-        void initialize(GamepadMapping mapping);
+        void initialize(GamepadMapping mapping, bool triggers_as_buttons = false);
 
         /**
          * @brief Updates the button and axis values given the incoming packet

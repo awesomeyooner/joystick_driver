@@ -28,8 +28,12 @@ class GamepadStatus
         Axis m_stick_right_y;
 
         // Trigger Axes
-        Axis m_trigger_left;
-        Axis m_trigger_right;
+        Axis m_trigger_axis_left;
+        Axis m_trigger_axis_right;
+
+        // Triggers as Buttons (optional)
+        Button m_trigger_button_left;
+        Button m_trigger_button_right;
 
         // Bumper / shoudler Buttons
         Button m_bumper_left;
@@ -44,6 +48,9 @@ class GamepadStatus
         // Joystick Pushdown
         Button m_button_left_stick;
         Button m_button_right_stick;
+
+        // True if triggers are buttons. False if they are axes
+        bool m_trigger_as_buttons = false;
 
 
         GamepadStatus() = default;

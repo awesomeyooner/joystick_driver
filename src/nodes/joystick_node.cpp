@@ -22,7 +22,8 @@ JoystickNode::JoystickNode() : Node("joystick_teleop")
         RCLCPP_INFO(this->get_logger(), "Using preset file for mappings");
 
         gamepad.initialize(
-            get_mapping_from_yaml(m_params.joystick_type + ".yaml")
+            get_mapping_from_yaml(m_params.joystick_type + ".yaml"),
+            get_yaml_params(m_params.joystick_type + ".yaml")["use_triggers_as_buttons"].as<bool>()
         );
     }
     // If not then fallback to the explicit mapping
@@ -31,7 +32,8 @@ JoystickNode::JoystickNode() : Node("joystick_teleop")
         RCLCPP_INFO(this->get_logger(), "Using custom mappings");
         // Assign the ROS Params mapping to the Gamepad API
         gamepad.initialize(
-            get_mapping()
+            get_mapping(),
+            m_params.use_triggers_as_buttons
         );
     }
 
@@ -75,6 +77,9 @@ void JoystickNode::topic_callback(const Joy& message) {
 
     if(gamepad.get_button(GamepadButton::RIGHT_BUMPER)->on_press())
         RCLCPP_INFO(this->get_logger(), "pressed RIGHT BUMPER");
+
+    if(gamepad.get_button(GamepadButton::LEFT_TRIGGER)->on_press())
+        RCLCPP_INFO(this->get_logger(), "pressed LEFT TRIGGER");
 
     // Publish the TwistStamped message
     publisher->publish(
@@ -139,13 +144,7 @@ GamepadMapping JoystickNode::get_mapping()
 
 GamepadMapping JoystickNode::get_mapping_from_yaml(string filename)
 {
-    string share_folder = ament_index_cpp::get_package_share_directory("joystick_driver");
-
-    filesystem::path config_path = filesystem::path(share_folder) / "config" / filename;
-
-    YAML::Node contents = YAML::LoadFile(config_path.string());
-
-    auto params = contents[get_name()]["ros__parameters"];
+    auto params = get_yaml_params(filename);
 
     // Populate the actual mapping object
     GamepadMapping mapping;
@@ -177,3 +176,22 @@ GamepadMapping JoystickNode::get_mapping_from_yaml(string filename)
     return mapping;
 
 } // end of "get_mapping_from_yaml(string)"
+
+
+YAML::Node JoystickNode::get_yaml_params(string filename)
+{
+    // The share folder of the given package
+    string share_folder = ament_index_cpp::get_package_share_directory("joystick_driver");
+
+    // The path to the yaml file
+    filesystem::path config_path = filesystem::path(share_folder) / "config" / filename;
+
+    // Parsed contents
+    YAML::Node contents = YAML::LoadFile(config_path.string());
+
+    // Get specifically the ros__parameters
+    auto params = contents[get_name()]["ros__parameters"];
+
+    return params;
+
+} // end of "get_yaml_params(string)"
