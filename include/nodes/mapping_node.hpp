@@ -70,7 +70,6 @@ class MappingNode : public rclcpp::Node
         // List of all axis bindings to ask for
         const std::vector<std::string> axes_prompts = {
             "stick_left_x",
-            "stick_left_x",
             "stick_left_y",
             "stick_right_x",
             "stick_right_y",

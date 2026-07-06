@@ -16,8 +16,10 @@ GamepadStatus::GamepadStatus(GamepadMapping mappings) :
     m_button_right(mappings.button_right, GamepadButton::ACTION_RIGHT),
     m_button_left(mappings.button_left, GamepadButton::ACTION_LEFT),
     m_button_up(mappings.button_up, GamepadButton::ACTION_UP),
+
     m_button_left_stick(mappings.button_left_stick, GamepadButton::LEFT_STICK),
     m_button_right_stick(mappings.button_right_stick, GamepadButton::RIGHT_STICK)
+    
 {} // end of constructor
 
 
