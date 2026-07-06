@@ -1,17 +1,19 @@
 #include "handles/gamepad.hpp"
 
 
-Gamepad::Gamepad(GamepadMapping mapping)
+Gamepad::Gamepad(GamepadMapping mapping, bool trigger_as_buttons)
 {
-    initialize(mapping);
+    initialize(mapping, trigger_as_buttons);
 
 } // end of constructor
 
 
-void Gamepad::initialize(GamepadMapping mapping)
+void Gamepad::initialize(GamepadMapping mapping, bool trigger_as_buttons)
 {
     // Initialze the status struct
     m_status = GamepadStatus(mapping);
+
+    m_status.m_trigger_as_buttons = trigger_as_buttons;
 
     // Configure the axes map
     m_axes[m_status.m_stick_left_x.get_id()] = &m_status.m_stick_left_x;
@@ -20,10 +22,13 @@ void Gamepad::initialize(GamepadMapping mapping)
     m_axes[m_status.m_stick_right_x.get_id()] = &m_status.m_stick_right_x;
     m_axes[m_status.m_stick_right_y.get_id()] = &m_status.m_stick_right_y;
 
-    m_axes[m_status.m_trigger_left.get_id()] = &m_status.m_trigger_left;
-    m_axes[m_status.m_trigger_right.get_id()] = &m_status.m_trigger_right;
+    m_axes[m_status.m_trigger_axis_left.get_id()] = &m_status.m_trigger_axis_left;
+    m_axes[m_status.m_trigger_axis_right.get_id()] = &m_status.m_trigger_axis_right;
 
     // Configure the buttons map
+    m_buttons[m_status.m_trigger_button_left.get_id()] = &m_status.m_trigger_button_left;
+    m_buttons[m_status.m_trigger_button_right.get_id()] = &m_status.m_trigger_button_right;
+
     m_buttons[m_status.m_bumper_left.get_id()] = &m_status.m_bumper_left;
     m_buttons[m_status.m_bumper_right.get_id()] = &m_status.m_bumper_right;
 

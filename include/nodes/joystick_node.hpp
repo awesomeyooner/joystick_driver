@@ -17,7 +17,6 @@
 #include <joystick_driver/joystick_driver_parameters.hpp>
 
 #include "handles/gamepad.hpp"
-#include "preconfigured_mappings.hpp"
 
 
 class JoystickNode : public rclcpp::Node
@@ -61,6 +60,14 @@ class JoystickNode : public rclcpp::Node
          * @return `GamepadMapping` 
          */
         GamepadMapping get_mapping_from_yaml(std::string filename);
+
+        /**
+         * @brief Get yaml file contents from a file in the `/config` folder
+         * 
+         * @param filename `std::string` The filename within the `/config` folder, such as `ps4.yaml`
+         * @return `YAML::Node` 
+         */
+        YAML::Node get_yaml_params(std::string filename);
 
         // Generate Parameter Library
         std::shared_ptr<joystick_driver::ParamListener> m_param_listener;
