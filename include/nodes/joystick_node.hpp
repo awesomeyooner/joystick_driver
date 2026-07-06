@@ -17,7 +17,6 @@
 #include <joystick_driver/joystick_driver_parameters.hpp>
 
 #include "handles/gamepad.hpp"
-#include "preconfigured_mappings.hpp"
 
 
 class JoystickNode : public rclcpp::Node

@@ -31,6 +31,12 @@ joystick_driver:
   }
 
   # Button Mapping params
+  use_triggers_as_buttons: {
+    type: bool,
+    default_value: false,
+    description: "Set to true if your triggers are buttons and not axes. This is the case for the Nintendo Switch."
+  }
+
   bumper_left: {
     type: int,
     default_value: 9,

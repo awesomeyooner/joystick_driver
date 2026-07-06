@@ -52,31 +52,28 @@ void JoystickNode::topic_callback(const Joy& message) {
 
     gamepad.update(message);
 
-    if(gamepad.get_button(PS4::X)->on_press())
-        RCLCPP_INFO(this->get_logger(), "pressed X");
-    
-    if(gamepad.get_button(PS4::X)->on_release())
-        RCLCPP_INFO(this->get_logger(), "released X");
+    if(gamepad.get_button(GamepadButton::ACTION_UP)->on_press())
+        RCLCPP_INFO(this->get_logger(), "pressed UP");
 
-    if(gamepad.get_button(PS4::CIRCLE)->on_press())
-        RCLCPP_INFO(this->get_logger(), "pressed CIRCLE");
+    if(gamepad.get_button(GamepadButton::ACTION_DOWN)->on_press())
+        RCLCPP_INFO(this->get_logger(), "pressed DOWN");
 
-    if(gamepad.get_button(PS4::SQUARE)->on_press())
-        RCLCPP_INFO(this->get_logger(), "pressed SQUARE");
+    if(gamepad.get_button(GamepadButton::ACTION_LEFT)->on_press())
+        RCLCPP_INFO(this->get_logger(), "pressed LEFT");
 
-    if(gamepad.get_button(PS4::TRIANGLE)->on_press())
-        RCLCPP_INFO(this->get_logger(), "pressed TRIANGLE");
+    if(gamepad.get_button(GamepadButton::ACTION_RIGHT)->on_press())
+        RCLCPP_INFO(this->get_logger(), "pressed RIGHT");
 
-    if(gamepad.get_button(PS4::LEFT_STICK)->on_press())
-        RCLCPP_INFO(this->get_logger(), "pressed LEFT STICk");
+    if(gamepad.get_button(GamepadButton::LEFT_STICK)->on_press())
+        RCLCPP_INFO(this->get_logger(), "pressed LEFT STICK");
 
-    if(gamepad.get_button(PS4::RIGHT_STICK)->on_press())
+    if(gamepad.get_button(GamepadButton::RIGHT_STICK)->on_press())
         RCLCPP_INFO(this->get_logger(), "pressed RIGHT STICK");
 
-    if(gamepad.get_button(PS4::LEFT_BUMPER)->on_press())
+    if(gamepad.get_button(GamepadButton::LEFT_BUMPER)->on_press())
         RCLCPP_INFO(this->get_logger(), "pressed LEFT BUMPER");
 
-    if(gamepad.get_button(PS4::RIGHT_BUMPER)->on_press())
+    if(gamepad.get_button(GamepadButton::RIGHT_BUMPER)->on_press())
         RCLCPP_INFO(this->get_logger(), "pressed RIGHT BUMPER");
 
     // Publish the TwistStamped message
