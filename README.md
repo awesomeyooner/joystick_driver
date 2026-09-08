@@ -1,6 +1,6 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
-[![ubuntu22](https://img.shields.io/badge/-UBUNTU_22.04-orange?style=flat-square&logo=ubuntu&logoColor=white)](https://releases.ubuntu.com/jammy/)
-[![humble](https://img.shields.io/badge/-HUMBLE-blue?style=flat-square&logo=ros)](https://docs.ros.org/en/humble/index.html)
+[![ubuntu24.04](https://img.shields.io/badge/-UBUNTU_24.04-orange?style=flat-square&logo=ubuntu&logoColor=white)](https://releases.ubuntu.com/noble/)
+[![jazzy](https://img.shields.io/badge/-JAZZY-blue?style=flat-square&logo=ros)](https://docs.ros.org/en/jazzy/index.html)
 
 # joystick_driver
 ROS 2 package that acts as an abstraction layer for the standard `joy` node
@@ -33,7 +33,6 @@ joy_node:
 
 joystick_teleop:
   ros__parameters:
-    use_sim_time: true
     joystick_type: "ps4" 
     # implemented ones are: 
     # "ps4"
@@ -83,9 +82,22 @@ from launch_ros.substitutions import FindPackageShare
 import xacro
 
 def generate_launch_description():
-    
+
     # CHANGE ME
-    package = "my_package"
+    package = "robot_hardware"
+
+    # Declare arguments
+    declared_arguments = []
+
+    declared_arguments.append(
+        DeclareLaunchArgument(
+            "use_sim_time",
+            default_value="false",
+            description="Whether or not to use sim time. Defaults to false",
+        )
+    )
+
+    use_sim_time = LaunchConfiguration("use_sim_time")
 
     # CHANGE ME
     params_file = os.path.join(get_package_share_directory(package), 'config','joystick.yaml')
@@ -99,7 +111,8 @@ def generate_launch_description():
     joystick_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(launch_file),
         launch_arguments={
-            "params_file": params_file
+            "params_file": params_file,
+            "use_sim_time": use_sim_time
         }.items()
     )
 
@@ -107,11 +120,19 @@ def generate_launch_description():
         joystick_launch
     ]
 
-    return LaunchDescription(nodes)
+    return LaunchDescription(declared_arguments + nodes)
 
 ```
 
-and launch with `ros2 launch <my_package> joystick.launch.py`
+You can launch using the following
+
+```bash
+# Standard Launch
+$ ros2 launch <my_package> joystick.launch.py
+
+# Launch with use_sim_time = true
+$ ros2 launch <my_package> joystick.launch.py use_sim_time:true
+```
 
 ## Usage with Docker
 
