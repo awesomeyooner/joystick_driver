@@ -20,6 +20,16 @@ def generate_launch_description():
         )
     )
 
+    declared_arguments.append(
+        DeclareLaunchArgument(
+            "use_sim_time",
+            default_value="false",
+            description="Whether or not to use sim time. Defaults to false",
+        )
+    )
+
+    use_sim_time = LaunchConfiguration("use_sim_time")
+
     joy_params = LaunchConfiguration("params_file")
 
     # Basic Joystick node
@@ -27,7 +37,7 @@ def generate_launch_description():
         package='joy',
         executable='joy_node',
         name='joy_node',
-        parameters=[joy_params]
+        parameters=[joy_params, {'use_sim_time': use_sim_time}]
     )
 
     # Driver node for twist and callbacks
@@ -35,7 +45,7 @@ def generate_launch_description():
         package='joystick_driver',
         executable='joystick_teleop',
         name='joystick_teleop',
-        parameters=[joy_params]
+        parameters=[joy_params, {'use_sim_time': use_sim_time}]
     )
 
     nodes = [
