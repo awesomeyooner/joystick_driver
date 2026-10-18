@@ -67,7 +67,7 @@ target_include_directories( ${MAIN_EXEC} PUBLIC
     $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/lib>
     $<INSTALL_INTERFACE:lib>
     $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include>
-    $<BUILD_INTERFACE:/home/ubuntu/Documents/Polar-One/ros2_ws/build/joystick_driver/include>
+    $<BUILD_INTERFACE:/home/ubuntu/Documents/ros2_ws/build/joystick_driver/include>
     /opt/ros/jazzy/include
 )
 

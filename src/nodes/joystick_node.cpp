@@ -6,6 +6,7 @@ using namespace rclcpp;
 using namespace std;
 
 using TwistStamped = geometry_msgs::msg::TwistStamped;
+using Twist = geometry_msgs::msg::Twist;
 using Joy = sensor_msgs::msg::Joy;
 
 
@@ -37,8 +38,18 @@ JoystickNode::JoystickNode() : Node("joystick_teleop")
         );
     }
 
-    // Create the TwistStamped publisher
-    publisher = this->create_publisher<TwistStamped>(m_params.twist_topic, SystemDefaultsQoS());
+    // `twist_topic`/stamped if the param is empty, if not then use the param
+    string stamped_topic = m_params.stamped_topic.empty() ? m_params.twist_topic + "/stamped" : m_params.stamped_topic;
+
+    // If only publishing stamped, then use the normal twist_topic
+    if(m_params.twist_type == "stamped")
+        stamped_topic = m_params.twist_topic;
+
+    // Create the TwistStamped and Twist publisher
+    if(m_params.twist_type == "stamped" || m_params.twist_type == "both")
+        stamped_publisher = this->create_publisher<TwistStamped>(stamped_topic, SystemDefaultsQoS());
+    if(m_params.twist_type == "unstamped" || m_params.twist_type == "both")
+        unstamped_publisher = this->create_publisher<Twist>(m_params.twist_topic, SystemDefaultsQoS());
 
     // Create the raw joystick subscriber
     subscription = this->create_subscription<Joy>(
@@ -78,13 +89,26 @@ void JoystickNode::topic_callback(const Joy& message) {
     if(gamepad.get_button(GamepadButton::RIGHT_BUMPER)->on_press())
         RCLCPP_INFO(this->get_logger(), "pressed RIGHT BUMPER");
 
-    // Publish the TwistStamped message
-    publisher->publish(
-        create_twist(
-            GamepadAxis::LEFT_Y, 
-            GamepadAxis::RIGHT_X
-        )
+    TwistStamped twist_stamped = create_twist(
+        GamepadAxis::LEFT_Y, 
+        GamepadAxis::RIGHT_X
     );
+
+    // Publish the twist type based on the given parameter
+    if(m_params.twist_type == "stamped")
+    {
+        stamped_publisher->publish(twist_stamped);
+    }
+    else if(m_params.twist_type == "unstamped")
+    {
+        unstamped_publisher->publish(twist_stamped.twist);
+    }
+    else if(m_params.twist_type == "both")
+    {
+        stamped_publisher->publish(twist_stamped);
+        unstamped_publisher->publish(twist_stamped.twist);
+    }
+        
     
 } // end of "topic_callback(const Joy&)"
 
