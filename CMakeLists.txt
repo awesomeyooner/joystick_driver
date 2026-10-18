@@ -71,18 +71,32 @@ target_include_directories( ${MAIN_EXEC} PUBLIC
     /opt/ros/jazzy/include
 )
 
+# YAML-CPP changed how they use CMake
+
+# For Ubuntu 24.04
+if(TARGET yaml-cpp::yaml-cpp)
+    set(YAML_LINK "yaml-cpp::yaml-cpp")
+# For Ubuntu 22.04
+elseif(TARGET yaml-cpp)
+    set(YAML_LINK "yaml-cpp")
+# For anything older
+else()
+    set(YAML_LINK ${YAML_CPP_LIBRARIES})
+    include_directories(${YAML_CPP_INCLUDE_DIRS})
+endif()
+
 target_link_libraries( ${MAIN_EXEC} PRIVATE
     rclcpp::rclcpp
     ${PROJECT_NAME}_parameters
     plib
-    yaml-cpp::yaml-cpp
+    ${YAML_LINK}
 )
 
 target_link_libraries( ${MAPPINGS_EXEC} PRIVATE
     rclcpp::rclcpp
     ${PROJECT_NAME}_parameters
     plib
-    yaml-cpp::yaml-cpp
+    ${YAML_LINK}
 )
 
 # Install Executable

@@ -11,7 +11,8 @@ ROS 2 package that acts as an abstraction layer for the standard `joy` node
 # Install necessary components
 $ sudo apt install -y joystick \
   jstest-gtk \
-  evtest
+  evtest \
+  libyaml-cpp-dev
 
 # Run This to test every device
 $ sudo evtest
@@ -21,6 +22,14 @@ $ cat /proc/bus/input/devices
 ```
 
 ## Usage
+
+### Setup
+
+```bash
+# In /ros2_ws/src
+$ git clone https://github.com/awesomeyooner/joystick_driver.git && cd joystick_driver
+$ git submodule update --init --recursive
+```
 
 Please create a configuration `.yaml` file in the `\config` folder. Here is an example:
 
@@ -141,7 +150,7 @@ $ ros2 launch joystick_driver joystick.launch.py
 
 # Launch with use_sim_time = true
 $ ros2 launch <my_package> joystick.launch.py use_sim_time:true
-$ ros2 launch joystick_package joystick.launch.py use_sim_time:true
+$ ros2 launch joystick_driver joystick.launch.py use_sim_time:true
 ```
 
 ## Usage with Docker
