@@ -149,8 +149,8 @@ $ ros2 launch <my_package> joystick.launch.py
 $ ros2 launch joystick_driver joystick.launch.py
 
 # Launch with use_sim_time = true
-$ ros2 launch <my_package> joystick.launch.py use_sim_time:true
-$ ros2 launch joystick_driver joystick.launch.py use_sim_time:true
+$ ros2 launch <my_package> joystick.launch.py use_sim_time:=true
+$ ros2 launch joystick_driver joystick.launch.py use_sim_time:=true
 ```
 
 ## Usage with Docker
