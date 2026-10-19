@@ -3,7 +3,19 @@ joystick_driver:
   twist_topic: {
     type: string,
     default_value: "cmd_vel",
-    description: "The topic to publish the TwistStamped messages to"
+    description: "The topic to publish the Twist messages to"
+  }
+
+  stamped_topic: {
+    type: string,
+    default_value: "",
+    description: "The topic to publish the TwistStamped messages to. Defaults to `twist_topic/stamped`, basically just adds `/stamped` to the normal twist topic"
+  }
+
+  twist_type: {
+    type: string,
+    default_value: "both",
+    description: "Set to 'stamped' to publish only Twiststamped on `twist_topic`, 'unstamped' to publish only Twist on `twist_topic`, and 'both' to publish both Twist and TwistStamped on `twist_topic` and `twist_topic/stamped` respectively"
   }
 
   joystick_type: {

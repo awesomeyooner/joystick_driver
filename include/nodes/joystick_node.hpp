@@ -76,8 +76,9 @@ class JoystickNode : public rclcpp::Node
         // Incoming Raw Joystick data
         rclcpp::Subscription<sensor_msgs::msg::Joy>::SharedPtr subscription;
 
-        // Twist Publisher
-        rclcpp::Publisher<geometry_msgs::msg::TwistStamped>::SharedPtr publisher;
+        // Twist and TwistStamped Publishers
+        rclcpp::Publisher<geometry_msgs::msg::TwistStamped>::SharedPtr stamped_publisher;
+        rclcpp::Publisher<geometry_msgs::msg::Twist>::SharedPtr unstamped_publisher;
 
         // Gamepad API
         Gamepad gamepad;

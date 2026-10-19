@@ -11,7 +11,8 @@ ROS 2 package that acts as an abstraction layer for the standard `joy` node
 # Install necessary components
 $ sudo apt install -y joystick \
   jstest-gtk \
-  evtest
+  evtest \
+  libyaml-cpp-dev
 
 # Run This to test every device
 $ sudo evtest
@@ -21,6 +22,14 @@ $ cat /proc/bus/input/devices
 ```
 
 ## Usage
+
+### Setup
+
+```bash
+# In /ros2_ws/src
+$ git clone https://github.com/awesomeyooner/joystick_driver.git && cd joystick_driver
+$ git submodule update --init --recursive
+```
 
 Please create a configuration `.yaml` file in the `\config` folder. Here is an example:
 
@@ -33,14 +42,22 @@ joy_node:
 
 joystick_teleop:
   ros__parameters:
-    joystick_type: "ps4" 
-    # implemented ones are: 
-    # "ps4"
-    # "gamesir"
-    # "xbox"
+    use_sim_time: false
+    joystick_type: "ps4" # implemented ones are: "ps4" and "switch" so far
 
-    max_tangential_velocity: 1.0 # m/s
-    max_angular_velocity: 3.14 # rad/s
+    twist_topic: "/cmd_vel"
+
+    # Only used when `twist_type = "both"`. When `twist_type = "stamped"`, the topic used will be `twist_topic`
+    # This param only exists to differentiate the topics when both types are published
+    stamped_topic: "/cmd_vel/stamped"
+
+    twist_type: "both"
+    # - "stamped" Publishes only TwistStamped on `twist_topic`
+    # - "unstamped" Publishes only Twist on `twist_topic`
+    # - "both" Publishes both TwistStamped and Twist on `twist_topic/stamped` and `twist_topic` respectively
+
+    max_tangential_velocity: 1.0 # 1.0
+    max_angular_velocity: 1.0 # 3.14
 ```
 
 To create custom mappings, run the `joy_node` in one terminal then run the `create_mappings` node
@@ -129,9 +146,11 @@ You can launch using the following
 ```bash
 # Standard Launch
 $ ros2 launch <my_package> joystick.launch.py
+$ ros2 launch joystick_driver joystick.launch.py
 
 # Launch with use_sim_time = true
-$ ros2 launch <my_package> joystick.launch.py use_sim_time:true
+$ ros2 launch <my_package> joystick.launch.py use_sim_time:=true
+$ ros2 launch joystick_driver joystick.launch.py use_sim_time:=true
 ```
 
 ## Usage with Docker
