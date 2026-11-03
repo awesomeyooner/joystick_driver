@@ -27,8 +27,7 @@ $ cat /proc/bus/input/devices
 
 ```bash
 # In /ros2_ws/src
-$ git clone https://github.com/awesomeyooner/joystick_driver.git && cd joystick_driver
-$ git submodule update --init --recursive
+$ git clone https://github.com/awesomeyooner/joystick_driver.git && cd joystick_driver && git submodule update --init --recursive && cd ..
 ```
 
 Please create a configuration `.yaml` file in the `\config` folder. Here is an example:
