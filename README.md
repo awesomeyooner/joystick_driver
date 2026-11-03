@@ -9,7 +9,8 @@ ROS 2 package that acts as an abstraction layer for the standard `joy` node
 
 ```bash
 # Install necessary components
-$ sudo apt install -y joystick \
+$ sudo apt install -y \
+  joystick \
   jstest-gtk \
   evtest \
   libyaml-cpp-dev
