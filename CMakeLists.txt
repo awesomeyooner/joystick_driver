@@ -46,6 +46,8 @@ set(SRC_FILES
 )
 
 set(MAPPINGS_SRC
+    src/handles/button.cpp
+
     src/mappings_main.cpp
 
     src/nodes/mapping_node.cpp

@@ -26,7 +26,7 @@ void Axis::update(double value)
 void Axis::update(const std::vector<float>& axes)
 {
     // Out of bounds check
-    if(m_index_in_msg < axes.size() && m_index_in_msg > 0)
+    if(m_index_in_msg < axes.size() && m_index_in_msg >= 0)
         update(axes.at(m_index_in_msg));
     
 } // end of "update"

@@ -1,17 +1,22 @@
 joystick_teleop:
   ros__parameters:
-    use_triggers_as_buttons: false
+    axis_dpad_x: 6
+    axis_dpad_y: 7
+    axis_trigger_left: 6
+    axis_trigger_right: 7
     bumper_left: 4
     bumper_right: 5
     button_down: 0
+    button_home: 10
     button_left: 3
     button_left_stick: 11
     button_right: 1
     button_right_stick: 12
+    button_settings: 9
+    button_trigger_left: 2
+    button_trigger_right: 5
     button_up: 2
     stick_left_x: 0
     stick_left_y: 1
     stick_right_x: 3
     stick_right_y: 4
-    trigger_left: 2
-    trigger_right: 5

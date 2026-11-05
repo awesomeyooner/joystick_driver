@@ -14,57 +14,46 @@ Gamepad::Gamepad(GamepadMapping mappings)
 void Gamepad::init(GamepadMapping mappings)
 {
     // Stick Axes
-    m_stick_left_x = Axis(mappings.stick_left_x,   GamepadAxis::LEFT_X);
-    m_stick_left_y = Axis(mappings.stick_left_y,   GamepadAxis::LEFT_Y);
-    m_stick_right_x = Axis(mappings.stick_right_x, GamepadAxis::RIGHT_X);
-    m_stick_right_y = Axis(mappings.stick_right_y, GamepadAxis::RIGHT_Y);
+    m_axis_map.insert(create_axis(GamepadAxis::LEFT_X, mappings.stick_left_x));
+    m_axis_map.insert(create_axis(GamepadAxis::LEFT_Y, mappings.stick_left_y));
+    m_axis_map.insert(create_axis(GamepadAxis::RIGHT_X, mappings.stick_right_x));
+    m_axis_map.insert(create_axis(GamepadAxis::RIGHT_Y, mappings.stick_right_y));
 
     // Trigger Axes
-    m_trigger_axis_left = Axis(mappings.trigger_left,      GamepadAxis::LEFT_TRIGGER);
-    m_trigger_axis_right = Axis(mappings.trigger_right,    GamepadAxis::RIGHT_TRIGGER);
+    m_axis_map.insert(create_axis(GamepadAxis::LEFT_TRIGGER, mappings.axis_trigger_left));
+    m_axis_map.insert(create_axis(GamepadAxis::RIGHT_TRIGGER, mappings.axis_trigger_right));
+
+    // DPAD Axes
+    m_axis_map.insert(create_axis(GamepadAxis::DPAD_X, mappings.axis_dpad_x));
+    m_axis_map.insert(create_axis(GamepadAxis::DPAD_Y, mappings.axis_dpad_y));
 
     // Trigger Buttons
-    m_trigger_button_left = Button(mappings.trigger_left,    GamepadButton::LEFT_TRIGGER);
-    m_trigger_button_right = Button(mappings.trigger_right,  GamepadButton::RIGHT_TRIGGER);
+    m_button_map.insert(create_button(GamepadButton::LEFT_TRIGGER, mappings.button_trigger_left));
+    m_button_map.insert(create_button(GamepadButton::RIGHT_TRIGGER, mappings.button_trigger_right));
 
     // Bumper Buttons
-    m_bumper_left = Button(mappings.bumper_left,     GamepadButton::LEFT_BUMPER);
-    m_bumper_right = Button(mappings.bumper_right,   GamepadButton::RIGHT_BUMPER);
+    m_button_map.insert(create_button(GamepadButton::LEFT_BUMPER, mappings.bumper_left));
+    m_button_map.insert(create_button(GamepadButton::RIGHT_BUMPER, mappings.bumper_right));
 
     // Face Buttons
-    m_button_down = Button(mappings.button_down,     GamepadButton::ACTION_DOWN);
-    m_button_right = Button(mappings.button_right,   GamepadButton::ACTION_RIGHT);
-    m_button_left = Button(mappings.button_left,     GamepadButton::ACTION_LEFT);
-    m_button_up = Button(mappings.button_up,         GamepadButton::ACTION_UP);
+    m_button_map.insert(create_button(GamepadButton::ACTION_DOWN, mappings.button_down));
+    m_button_map.insert(create_button(GamepadButton::ACTION_RIGHT, mappings.button_right));
+    m_button_map.insert(create_button(GamepadButton::ACTION_LEFT, mappings.button_left));
+    m_button_map.insert(create_button(GamepadButton::ACTION_UP, mappings.button_up));
 
     // Stick Buttons
-    m_button_left_stick = Button(mappings.button_left_stick,     GamepadButton::LEFT_STICK);
-    m_button_right_stick = Button(mappings.button_right_stick,   GamepadButton::RIGHT_STICK);
+    m_button_map.insert(create_button(GamepadButton::LEFT_STICK, mappings.button_left_stick));
+    m_button_map.insert(create_button(GamepadButton::RIGHT_STICK, mappings.button_right_stick));
 
-    // Configure the axes map
-    m_axis_map[m_stick_left_x.get_id()] = &m_stick_left_x;
-    m_axis_map[m_stick_left_y.get_id()] = &m_stick_left_y;
+    // DPAD Buttons
+    m_button_map.insert(create_button(GamepadButton::DPAD_DOWN, mappings.button_dpad_down));
+    m_button_map.insert(create_button(GamepadButton::DPAD_RIGHT, mappings.button_dpad_right));
+    m_button_map.insert(create_button(GamepadButton::DPAD_LEFT, mappings.button_dpad_left));
+    m_button_map.insert(create_button(GamepadButton::DPAD_UP, mappings.button_dpad_up));
 
-    m_axis_map[m_stick_right_x.get_id()] = &m_stick_right_x;
-    m_axis_map[m_stick_right_y.get_id()] = &m_stick_right_y;
-
-    m_axis_map[m_trigger_axis_left.get_id()] = &m_trigger_axis_left;
-    m_axis_map[m_trigger_axis_right.get_id()] = &m_trigger_axis_right;
-
-    // Configure the buttons map
-    m_button_map[m_trigger_button_left.get_id()] = &m_trigger_button_left;
-    m_button_map[m_trigger_button_right.get_id()] = &m_trigger_button_right;
-
-    m_button_map[m_bumper_left.get_id()] = &m_bumper_left;
-    m_button_map[m_bumper_right.get_id()] = &m_bumper_right;
-
-    m_button_map[m_button_down.get_id()] = &m_button_down;
-    m_button_map[m_button_right.get_id()] = &m_button_right;
-    m_button_map[m_button_left.get_id()] = &m_button_left;
-    m_button_map[m_button_up.get_id()] = &m_button_up;
-
-    m_button_map[m_button_left_stick.get_id()] = &m_button_left_stick;
-    m_button_map[m_button_right_stick.get_id()] = &m_button_right_stick;
+    // Special Buttons
+    m_button_map.insert(create_button(GamepadButton::HOME, mappings.button_home));
+    m_button_map.insert(create_button(GamepadButton::HOME, mappings.button_settings));
 
 } // end of "init(GampepadMapping)"
 
@@ -105,3 +94,17 @@ Axis* Gamepad::get_axis(int id)
     return m_axis_map.at(id);
 
 } // end of "get_axis"
+
+
+pair<int, Axis*> Gamepad::create_axis(int id, int index)
+{
+    return {id, new Axis(index, id)};
+
+} // end of "create_axis(int, int)"
+
+
+pair<int, Button*> Gamepad::create_button(int id, int index)
+{
+    return {id, new Button(index, id)};
+
+} // end of "create_axis(int, int)"

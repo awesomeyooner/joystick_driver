@@ -56,9 +56,10 @@ class MappingNode : public rclcpp::Node
 
     private:
 
-        // List of bindings that are strictly either axes or buttons
-        const std::vector<std::string> prompts = {
-            "home",
+        // List of bindings for buttons
+        std::vector<std::string> button_prompts = {
+            "button_home",
+            "button_settings",
 
             "button_up",
             "button_down",
@@ -67,21 +68,35 @@ class MappingNode : public rclcpp::Node
 
             "bumper_left",
             "bumper_right",
-            
+
             "button_left_stick",
             "button_right_stick",
+        };
 
+        // List of the bindings for the axes
+        std::vector<std::string> axis_prompts = {
             "stick_left_x",
             "stick_left_y",
             "stick_right_x",
-            "stick_right_y"
+            "stick_right_y",
         };
 
-        // List of the bindings that could be axes, buttons, or both
-        const std::vector<std::string> dynamic_prompts = {
-            "trigger_left",
-            "trigger_right",
-        };
+        // List of bindings that could be either axes, buttons, or both
+        std::vector<std::string> dynamic_prompts = {
+            "button_dpad_up",
+            "button_dpad_down",
+            "button_dpad_left",
+            "button_dpad_right",
+
+            "axis_dpad_x",
+            "axis_dpad_y",
+
+            "axis_trigger_left",
+            "axis_trigger_right",
+
+            "button_trigger_left",
+            "button_trigger_right"
+        }; 
 
         // How big the change-of-states needs to be for a button
         // to be considered active
@@ -101,6 +116,10 @@ class MappingNode : public rclcpp::Node
         PromptState prompt_state = PromptState::READY;
 
         bool ask_for_home = false;
+        bool allow_skipping = false;
+
+        Button home_button;
+        Button settings_button;
 
         rclcpp::Subscription<sensor_msgs::msg::Joy>::SharedPtr subscription;
 
@@ -115,11 +134,11 @@ class MappingNode : public rclcpp::Node
 
         std::vector<int> get_active_axes(const std::vector<float>& axis_states);
 
-        bool is_resting(const std::vector<int>& button_states, const std::vector<float>& axis_states);
-
-        bool get_home_button(const std::vector<int>& button_states);
+        bool get_button_state(std::string button, const std::vector<int>& button_states);
 
         std::vector<int> get_values(const std::map<std::string, int>& map);
+
+        bool remove_prompt(std::string prompt);
 
         void info(std::string message);
 

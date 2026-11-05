@@ -26,7 +26,10 @@ namespace GamepadButton
         // In the case that triggers are buttons
         // These possibly might not be used
         LEFT_TRIGGER = 12,
-        RIGHT_TRIGGER = 13
+        RIGHT_TRIGGER = 13,
+
+        HOME = 14,
+        SETTINGS = 15,
 
     }; // enum
 
@@ -45,7 +48,12 @@ namespace GamepadAxis
         // In the case that triggers are axes
         // These possibly might not be used
         LEFT_TRIGGER = 4,
-        RIGHT_TRIGGER = 5
+        RIGHT_TRIGGER = 5,
+
+        // In the case that DPAD are buttons
+        // This may not be used
+        DPAD_X = 6,
+        DPAD_Y = 7
 
     }; // enum
 

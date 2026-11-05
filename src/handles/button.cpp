@@ -58,7 +58,7 @@ void Button::update(bool is_pressed)
 void Button::update(const vector<int>& buttons)
 {
     // OOB Check
-    if(m_index_in_msg < buttons.size() && m_index_in_msg > 0)
+    if(m_index_in_msg >= buttons.size() && m_index_in_msg < 0)
         return;
 
     // Get the current state of the button from the message

@@ -67,36 +67,9 @@ class Gamepad
 
     private:
 
-        // Joystick Axes
-        Axis m_stick_left_x;
-        Axis m_stick_left_y;
-        Axis m_stick_right_x;
-        Axis m_stick_right_y;
+        std::pair<int, Axis*> create_axis(int id, int index);
 
-        // Trigger Axes
-        Axis m_trigger_axis_left;
-        Axis m_trigger_axis_right;
-
-        // Triggers as Buttons (optional)
-        Button m_trigger_button_left;
-        Button m_trigger_button_right;
-
-        // Bumper / shoudler Buttons
-        Button m_bumper_left;
-        Button m_bumper_right;
-
-        // Action Buttons
-        Button m_button_down;
-        Button m_button_right;
-        Button m_button_left;
-        Button m_button_up;
-
-        // Joystick Pushdown
-        Button m_button_left_stick;
-        Button m_button_right_stick;
-
-        // True if triggers are buttons. False if they are axes
-        bool m_trigger_as_buttons = false;
+        std::pair<int, Button*> create_button(int id, int index);
 
         // Map containing pointers to all Buttons and Axes at their corresponding Universal IDs
         std::map<int, Button*> m_button_map;

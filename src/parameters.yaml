@@ -48,93 +48,159 @@ joystick_driver:
     description: "The max magnitude of the `Twist.angular.z` component" 
   }
 
-  # Button Mapping params
-  use_triggers_as_buttons: {
-    type: bool,
-    default_value: false,
-    description: "Set to true if your triggers are buttons and not axes. This is the case for the Nintendo Switch."
-  }
+  # ==============================
+  # GAMEPAD BINDINGS
+  # ==============================
 
-  bumper_left: {
-    type: int,
-    default_value: 9,
-    description: "The index in the `joy_msg` for the Left Bumper of a controller"
-  }
-
-  bumper_right: {
-    type: int,
-    default_value: 10,
-    description: "The index in the `joy_msg` for the Right Bumper of a controller"
-  }
-
-  button_down: {
-    type: int,
-    default_value: 0,
-    description: "The index in the `joy_msg` for the Down button of a controller"
-  }
-
-  button_left: {
-    type: int,
-    default_value: 2,
-    description: "The index in the `joy_msg` for the Left button of a controller"
-  }
-
-  button_left_stick: {
-    type: int,
-    default_value: 7,
-    description: "The index in the `joy_msg` for the Left Stick button of a controller"
-  }
-
-  button_right: {
-    type: int,
-    default_value: 1,
-    description: "The index in the `joy_msg` for the Right button of a controller"
-  }
-
-  button_right_stick: {
-    type: int,
-    default_value: 8,
-    description: "The index in the `joy_msg` for the Right Stick button of a controller"
-  }
-
-  button_up: {
-    type: int,
-    default_value: 3,
-    description: "The index in the `joy_msg` for the Up button of a controller"
-  }
-
+  # Thumbstick axes
   stick_left_x: {
     type: int,
-    default_value: 0,
+    default_value: -1,
     description: "The index in the `joy_msg` for the Left Stick X axis of a controller"
   }
 
   stick_left_y: {
     type: int,
-    default_value: 1,
+    default_value: -1,
     description: "The index in the `joy_msg` for the Left Stick Y axis of a controller"
   }
 
   stick_right_x: {
     type: int,
-    default_value: 2,
+    default_value: -1,
     description: "The index in the `joy_msg` for the Right Stick X axis of a controller"
   }
 
   stick_right_y: {
     type: int,
-    default_value: 3,
+    default_value: -1,
     description: "The index in the `joy_msg` for the Right Stick Y axis of a controller"
   }
 
-  trigger_left: {
+  # Triggers as buttons (optional)
+  button_trigger_left: {
     type: int,
-    default_value: 4,
+    default_value: -1,
+    description: "The index in the `joy_msg` for the Left Trigger button of a controller"
+  }
+
+  button_trigger_right: {
+    type: int,
+    default_value: -1,
+    description: "The index in the `joy_msg` for the Right Trigger button of a controller"
+  }
+
+  # Triggers as axes (optional)
+  axis_trigger_left: {
+    type: int,
+    default_value: -1,
     description: "The index in the `joy_msg` for the Left Trigger axis of a controller"
   }
 
-  trigger_right: {
+  axis_trigger_right: {
     type: int,
-    default_value: 5,
+    default_value: -1,
     description: "The index in the `joy_msg` for the Right Trigger axis of a controller"
+  }
+
+  # Bumper Buttons
+  bumper_left: {
+    type: int,
+    default_value: -1,
+    description: "The index in the `joy_msg` for the Left Bumper button of a controller"
+  }
+
+  bumper_right: {
+    type: int,
+    default_value: -1,
+    description: "The index in the `joy_msg` for the Right Bumper button of a controller"
+  }
+
+  # Face Buttons
+  button_down: {
+    type: int,
+    default_value: -1,
+    description: "The index in the `joy_msg` for the Down button of a controller"
+  }
+
+  button_right: {
+    type: int,
+    default_value: -1,
+    description: "The index in the `joy_msg` for the Right button of a controller"
+  }
+
+  button_left: {
+    type: int,
+    default_value: -1,
+    description: "The index in the `joy_msg` for the Left button of a controller"
+  }
+
+  button_up: {
+    type: int,
+    default_value: -1,
+    description: "The index in the `joy_msg` for the Up button of a controller"
+  }
+
+  # Thumbstick Buttons
+  button_left_stick: {
+    type: int,
+    default_value: -1,
+    description: "The index in the `joy_msg` for the Left Stick button of a controller"
+  }
+
+  button_right_stick: {
+    type: int,
+    default_value: -1,
+    description: "The index in the `joy_msg` for the Right Stick button of a controller"
+  }
+
+  # DPAD as buttons (optional)
+  button_dpad_up: {
+    type: int,
+    default_value: -1,
+    description: "The index in the `joy_msg` for the D-Pad Up button of a controller"
+  }
+
+  button_dpad_down: {
+    type: int,
+    default_value: -1,
+    description: "The index in the `joy_msg` for the D-Pad Down button of a controller"
+  }
+
+  button_dpad_left: {
+    type: int,
+    default_value: -1,
+    description: "The index in the `joy_msg` for the D-Pad Left button of a controller"
+  }
+
+  button_dpad_right: {
+    type: int,
+    default_value: -1,
+    description: "The index in the `joy_msg` for the D-Pad Right button of a controller"
+  }
+
+  # DPAD as axes (optional)
+  axis_dpad_x: {
+    type: int,
+    default_value: -1,
+    description: "The index in the `joy_msg` for the D-Pad X axis of a controller"
+  }
+
+  axis_dpad_y: {
+    type: int,
+    default_value: -1,
+    description: "The index in the `joy_msg` for the D-Pad Y axis of a controller"
+  }
+
+  # Home Button
+  button_home: {
+    type: int,
+    default_value: -1,
+    description: "The index in the `joy_msg` for the Home button of a controller"
+  }
+
+  button_settings: {
+    type: int,
+    default_value: -1,
+    description: "The index in the `joy_msg` for the Settings button of a controller"
   }

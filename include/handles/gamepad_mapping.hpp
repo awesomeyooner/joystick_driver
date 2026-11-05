@@ -8,24 +8,47 @@
  */
 struct GamepadMapping
 {
-    int stick_left_x;
-    int stick_left_y;
-    int stick_right_x;
-    int stick_right_y;
+    // Thumbstick axes
+    int stick_left_x = -1;
+    int stick_left_y = -1;
+    int stick_right_x = -1;
+    int stick_right_y = -1;
 
-    int trigger_left;
-    int trigger_right;
+    // Triggers as buttons (optional)
+    int button_trigger_left = -1;
+    int button_trigger_right = -1;
 
-    int bumper_left;
-    int bumper_right;
+    // Triggers as axes (optional)
+    int axis_trigger_left = -1;
+    int axis_trigger_right = -1;
 
-    int button_down;
-    int button_right;
-    int button_left;
-    int button_up;
+    // Bumper Buttons
+    int bumper_left = -1;
+    int bumper_right = -1;
 
-    int button_left_stick;
-    int button_right_stick;
+    // Face Buttons
+    int button_down = -1;
+    int button_right = -1;
+    int button_left = -1;
+    int button_up = -1;
+
+    // Thumbstick Buttons
+    int button_left_stick = -1;
+    int button_right_stick = -1;
+
+    // DPAD as buttons (optional)
+    int button_dpad_up = -1;
+    int button_dpad_down = -1;
+    int button_dpad_left = -1;
+    int button_dpad_right = -1;
+
+    // DPAD as axes (optional)
+    int axis_dpad_x = -1;
+    int axis_dpad_y = -1;
+
+    // Special Buttons
+    int button_home = -1;
+    int button_settings = -1;
     
 }; // struct GamepadMapping
 
