@@ -22,9 +22,9 @@ JoystickNode::JoystickNode() : Node("joystick_teleop")
     {
         RCLCPP_INFO(this->get_logger(), "Using preset file for mappings");
 
-        gamepad.initialize(
-            get_mapping_from_yaml(m_params.joystick_type + ".yaml"),
-            get_yaml_params(m_params.joystick_type + ".yaml")["use_triggers_as_buttons"].as<bool>()
+        gamepad.init(
+            get_mapping_from_yaml(m_params.joystick_type + ".yaml")
+            // get_yaml_params(m_params.joystick_type + ".yaml")["use_triggers_as_buttons"].as<bool>()
         );
     }
     // If not then fallback to the explicit mapping
@@ -32,9 +32,9 @@ JoystickNode::JoystickNode() : Node("joystick_teleop")
     {
         RCLCPP_INFO(this->get_logger(), "Using custom mappings");
         // Assign the ROS Params mapping to the Gamepad API
-        gamepad.initialize(
-            get_mapping(),
-            m_params.use_triggers_as_buttons
+        gamepad.init(
+            get_mapping()
+            // m_params.use_triggers_as_buttons
         );
     }
 
@@ -56,6 +56,11 @@ JoystickNode::JoystickNode() : Node("joystick_teleop")
         "joy", 
         SystemDefaultsQoS(), 
         bind(&JoystickNode::topic_callback, this, _1)
+    );
+
+    m_timer = this->create_wall_timer(
+        chrono::milliseconds(1000 / m_params.publish_rate), // Publish every 100ms
+        bind(&JoystickNode::publish, this)
     );
 
 } // end of "JoystickNode()"
@@ -89,6 +94,13 @@ void JoystickNode::topic_callback(const Joy& message) {
     if(gamepad.get_button(GamepadButton::RIGHT_BUMPER)->on_press())
         RCLCPP_INFO(this->get_logger(), "pressed RIGHT BUMPER");
 
+    publish();
+    
+} // end of "topic_callback(const Joy&)"
+
+
+void JoystickNode::publish()
+{
     TwistStamped twist_stamped = create_twist(
         GamepadAxis::LEFT_Y, 
         GamepadAxis::RIGHT_X
@@ -108,9 +120,8 @@ void JoystickNode::topic_callback(const Joy& message) {
         stamped_publisher->publish(twist_stamped);
         unstamped_publisher->publish(twist_stamped.twist);
     }
-        
-    
-} // end of "topic_callback(const Joy&)"
+
+} // end of "publish()"
 
 
 TwistStamped JoystickNode::create_twist(int linear_axis, int angular_axis)

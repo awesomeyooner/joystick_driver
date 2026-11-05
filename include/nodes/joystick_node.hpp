@@ -35,6 +35,8 @@ class JoystickNode : public rclcpp::Node
          */
         void topic_callback(const sensor_msgs::msg::Joy& message);
 
+        void publish();
+
         /**
          * @brief Create a 2D TwistStamped message whose `linear.x` is the axis of `linear_axis` and whose
          * `angular.z` is the axis of `angular_axis`. These are scaled with `max_tangential_velocity` and
@@ -75,6 +77,9 @@ class JoystickNode : public rclcpp::Node
 
         // Incoming Raw Joystick data
         rclcpp::Subscription<sensor_msgs::msg::Joy>::SharedPtr subscription;
+
+        // Timer to publish at a fixed rate
+        rclcpp::TimerBase::SharedPtr m_timer;
 
         // Twist and TwistStamped Publishers
         rclcpp::Publisher<geometry_msgs::msg::TwistStamped>::SharedPtr stamped_publisher;

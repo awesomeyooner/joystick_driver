@@ -1,6 +1,9 @@
 #include "handles/button.hpp"
 
 
+using namespace std;
+
+
 Button::Button(int index, int id) :
     m_index_in_msg(index), m_universal_id(id)
 {
@@ -52,10 +55,11 @@ void Button::update(bool is_pressed)
 } // end of "update"
 
 
-void Button::update(std::vector<int> buttons)
+void Button::update(const vector<int>& buttons)
 {
-    // NOTE: you don't need the ternary operator, but for
-    // sanity check, just keep for now
+    // OOB Check
+    if(m_index_in_msg < buttons.size() && m_index_in_msg > 0)
+        return;
 
     // Get the current state of the button from the message
     bool is_pressed = buttons.at(m_index_in_msg) == 1 ? true : false;

@@ -23,9 +23,11 @@ void Axis::update(double value)
 } // end of "update"
 
 
-void Axis::update(std::vector<float> axes)
+void Axis::update(const std::vector<float>& axes)
 {
-    update(axes.at(m_index_in_msg));
+    // Out of bounds check
+    if(m_index_in_msg < axes.size() && m_index_in_msg > 0)
+        update(axes.at(m_index_in_msg));
     
 } // end of "update"
 

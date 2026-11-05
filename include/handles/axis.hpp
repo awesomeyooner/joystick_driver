@@ -41,7 +41,7 @@ class Axis
          * 
          * @param axes 
          */
-        void update(std::vector<float> axes);
+        void update(const std::vector<float>& axes);
 
         /**
          * @brief Returns this axis's Universal ID
