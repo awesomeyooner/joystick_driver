@@ -66,7 +66,7 @@ class Button
          * @param buttons `std::vector<int>` - The array of buttons from
          * the `joy_msg`
          */
-        void update(std::vector<int> buttons);
+        void update(const std::vector<int>& buttons);
 
         /**
          * @brief Returns this button's Universal ID

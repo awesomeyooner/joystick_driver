@@ -40,7 +40,7 @@ def generate_launch_description():
 
     nodes = [
         joy_node,
-        # mappings_node
+        mappings_node
     ]
 
     return LaunchDescription(declared_arguments + nodes)

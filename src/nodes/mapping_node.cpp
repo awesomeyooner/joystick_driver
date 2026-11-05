@@ -26,91 +26,91 @@ StatusCode MappingNode::topic_callback(const sensor_msgs::msg::Joy& msg)
     if(initial_axis_states.size() == 0)
         initial_axis_states = msg.axes;
 
-    string current_prompt = get_current_prompt();
+    string prompt = get_prompt();
 
     // If we have populated all prompts
     // Then create the file and shutdown
-    if(current_prompt == "")
+    if(prompt == "")
     {
-        create_file();
+        create_yaml();
         rclcpp::shutdown();
 
         return StatusCode::OK;
     }
 
-    if(!waiting_for_input)
+    // If we're ready to send a prompt
+    // Then send it and change the state accordingly
+    if(prompt_state == PromptState::READY)
     {
-        Logger::info("Please activate: " + current_prompt);
-        waiting_for_input = true;
+        std::string message = "Please activate: " + prompt;
+
+        if(ask_for_home)
+            prompt += ". Press HOME to bind";
+        if(allow_skipping)
+            prompt += ". Press SETTINGS to skip";
+        
+        info("Please activate: " + prompt);
+
+        prompt_state = PromptState::WAITING_FOR_ACTIVITY;
     }
 
-    switch(prompt_state)
+    home_button.update(get_button_state("button_home", msg.buttons));
+    settings_button.update(get_button_state("button_settings", msg.buttons));
+
+    // If we allow skipping and the settings button was pressed (to skip)
+    // Then remove this prompt and continue to the next one
+    if(allow_skipping && settings_button.on_press())
     {
-        case PromptState::BUTTONS:
-        {
-
-            vector<int> active_buttons = get_active_buttons(msg.buttons, button_mappings);
-
-            if(active_buttons.size() != 1)
-                return StatusCode::OK;
-
-            button_mappings.insert({current_prompt, active_buttons.at(0)});
-
-            break;
-        }
-
-        case PromptState::AXES:
-        {
-            vector<int> active_axes = get_active_axes(msg.axes, axis_mappings);
-
-            if(active_axes.size() != 1)
-                return StatusCode::OK;
-
-            axis_mappings.insert({current_prompt, active_axes.at(0)});
-            break;
-        }
-
-        case PromptState::DYNAMIC:
-        {
-            vector<int> active_axes = get_active_axes(msg.axes, axis_mappings);
-            vector<int> active_buttons = get_active_buttons(msg.buttons, button_mappings);
-
-            // If there's NOT only one active action
-            // Then return
-            if(active_axes.size() + active_buttons.size() != 1)
-                return StatusCode::OK;
-
-            if(active_axes.size() == 1)
-            {
-                axis_mappings.insert({current_prompt, active_axes.at(0)});
-            }
-            else if(active_buttons.size() == 1)
-            {
-                button_mappings.insert({current_prompt, active_buttons.at(0)});
-                triggers_as_buttons = true;
-            }
-
-            break;
-        }
+        remove_prompt(prompt);
+        prompt_state = PromptState::READY;
+        return StatusCode::OK;
     }
 
-    waiting_for_input = false;
+    vector<int> active_buttons = get_active_buttons(msg.buttons);
+    vector<int> active_axes = get_active_axes(msg.axes);
+
+    // Don't advance until there is activity
+    if(active_buttons.size() == 0 && active_axes.size() == 0)
+        return StatusCode::OK;
+
+    // If we need to wait for home button to be pressed and it's not pressed
+    // Then don't advance
+    if(ask_for_home && !home_button.on_press())
+        return StatusCode::OK;  
+
+    // Prioritize buttons over axes
+    if(active_buttons.size() == 1)
+    {
+        button_mappings.insert({prompt, active_buttons.at(0)});
+
+        prompt_state = PromptState::READY;
+
+        return StatusCode::OK;
+    }
+    else if(active_axes.size() == 1)
+    {
+        axis_mappings.insert({prompt, active_axes.at(0)});
+
+        prompt_state = PromptState::READY;
+
+        return StatusCode::OK;
+    }
 
     return StatusCode::OK;
 
 } // end of "topic_callback(const sensor_msgs::msg::Joy&)"
 
 
-StatusCode MappingNode::create_file()
+StatusCode MappingNode::create_yaml()
 {
-    Logger::info("Preparing to create joystick_mappings.yaml file...");
+    info("Preparing to create joystick_mappings.yaml file...");
 
     YAML::Emitter yaml_out;
     ofstream output_file("joystick_mappings.yaml");
 
     if(!output_file.is_open())
     {
-        Logger::error("Failed to write to file!");
+        RCLCPP_ERROR(this->get_logger(), "Failed to write to file!");
         output_file.close();
         return StatusCode::FAILED;
     }
@@ -128,8 +128,8 @@ StatusCode MappingNode::create_file()
         yaml_out << YAML::Key << "ros__parameters" << YAML::Value;
 
             yaml_out << YAML::BeginMap;
-                yaml_out << YAML::Key << "use_triggers_as_buttons";
-                yaml_out << YAML::Value << triggers_as_buttons;
+                // yaml_out << YAML::Key << "use_triggers_as_buttons";
+                // yaml_out << YAML::Value << triggers_as_buttons;
 
                 // Manually enter map because normal << needs a parent
                 for(const auto& [key, value] : mappings)
@@ -151,52 +151,51 @@ StatusCode MappingNode::create_file()
 
     output_file.close();
 
-    Logger::info("Successfully created .yaml file!");
+    info("Successfully created .yaml file!");
     
     return StatusCode::OK;
-} // end of "create_file()"
+
+} // end of "create_yaml()"
 
 
-string MappingNode::get_current_prompt()
+string MappingNode::get_prompt()
 {
-    // Buttons first then axes
-
+    // For every prompt
+    // See if we've already assigned this prompt to a mapping
+    // If so, skip
+    // If not, return that prompt
     for(string prompt : button_prompts)
     {
-        // If this prompt was already set
+        // If this given prompt is already assigned in the mappings
         // Then skip it
-        if(button_mappings.count(prompt) == 1)
+        if(button_mappings.find(prompt) != button_mappings.end())
             continue;
 
         return prompt;
     }
 
-    // If code gets here, then all buttom prompts are set
-    prompt_state = PromptState::AXES;
-
-    for(string prompt : axes_prompts)
+    for(string prompt : axis_prompts)
     {
-        // If this prompt was already set
+        // If this given prompt is already assigned in the mappings
         // Then skip it
-        if(axis_mappings.count(prompt) == 1)
+        if(axis_mappings.find(prompt) != axis_mappings.end())
             continue;
 
         return prompt;
     }
 
-    // If code gets here, then all buttom and axis prompts are set
-    prompt_state = PromptState::DYNAMIC;
+    // If code gets here then that means we've filled up all normal prompts, so switch to dynamic
+    ask_for_home = true;
+    allow_skipping = true;
 
     for(string prompt : dynamic_prompts)
     {
-        // If this prompt was already set in buttons
-        // Then skip it
-        if(button_mappings.count(prompt) == 1)
-            continue;
+        bool in_buttons = button_mappings.find(prompt) != button_mappings.end();
+        bool in_axes = axis_mappings.find(prompt) != axis_mappings.end();
 
-        // If this prompt was already set in axes
+        // If this prompt is already assigned in either mapping
         // Then skip it
-        if(axis_mappings.count(prompt) == 1)
+        if(in_buttons || in_axes)
             continue;
 
         return prompt;
@@ -204,21 +203,22 @@ string MappingNode::get_current_prompt()
 
     return "";
 
-} // end of "get_current_prompt()"
+} // end of "get_prompt()"
 
 
-vector<int> MappingNode::get_active_buttons(const vector<int>& button_states, const map<string, int>& excluding)
+vector<int> MappingNode::get_active_buttons(const vector<int>& button_states)
 {
     // Indexes of which buttons are actively pressed
-    vector<int> active_buttons;
+    vector<int> active;
 
-    vector<int> excluded_buttons = get_values(button_mappings);
+    // Indexes of buttons we've already mapped
+    vector<int> excluded = get_values(button_mappings);
 
     // Push back all the indexes whose values are equal to 1 (active)
     for(int i = 0; i < button_states.size(); i++)
     {
         // Skip this button if it's in the exlcuded list
-        if(count(excluded_buttons.begin(), excluded_buttons.end(), i) == 1)
+        if(find(excluded.begin(), excluded.end(), i) != excluded.end())
             continue;
 
         int initial_state = initial_button_states.at(i);
@@ -226,26 +226,26 @@ vector<int> MappingNode::get_active_buttons(const vector<int>& button_states, co
 
         // If the button is active
         if(abs(current_state - initial_state) >= ACTIVE_BUTTON_THRESHOLD)
-            active_buttons.push_back(i);
+            active.push_back(i);
     }
 
-    return active_buttons;
+    return active;
 
 } // end of "get_active_buttons(const vector<int>&)"
 
 
-vector<int> MappingNode::get_active_axes(const vector<float>& axis_states, const map<string, int>& excluding)
+vector<int> MappingNode::get_active_axes(const vector<float>& axis_states)
 {
     // Indexes of which axes are actively pressed
-    vector<int> active_axes;
+    vector<int> active;
 
-    vector<int> excluded_buttons = get_values(axis_mappings);
+    vector<int> excluded = get_values(axis_mappings);
 
     // Push back all the indexes whose values are equal to 1 (active)
     for(int i = 0; i < axis_states.size(); i++)
     {
-        // Skip this button if it's in the exlcuded list
-        if(count(excluded_buttons.begin(), excluded_buttons.end(), i) == 1)
+        // Skip this axis if it's in the exlcuded list
+        if(find(excluded.begin(), excluded.end(), i) != excluded.end())
             continue;
 
         float initial_state = initial_axis_states.at(i);
@@ -253,18 +253,33 @@ vector<int> MappingNode::get_active_axes(const vector<float>& axis_states, const
 
         // If the button is active
         if(abs(current_state - initial_state) >= ACTIVE_AXIS_THRESHOLD)
-            active_axes.push_back(i);
+            active.push_back(i);
     }
 
-    return active_axes;
+    return active;
 
 } // end of "get_active_buttons(const vector<int>&)"
+
+
+bool MappingNode::get_button_state(std::string button, const std::vector<int>& button_states)
+{
+    // If the button hasn't been set yet
+    // Then return false
+    if(button_mappings.find(button) == button_mappings.end())
+        return false;
+
+    int home_button_index = button_mappings.at(button);
+
+    return abs(button_states.at(home_button_index) - initial_button_states.at(home_button_index));
+
+} // end of "get_button_state(std::string, const std::vector<int>&)"
 
 
 vector<int> MappingNode::get_values(const map<string, int>& map)
 {
     vector<int> values;
 
+    // Push back every value in the map
     for(const auto& pair : map)
     {
         values.push_back(pair.second);
@@ -273,3 +288,41 @@ vector<int> MappingNode::get_values(const map<string, int>& map)
     return values;
 
 } // end of "get_values(const map<string, int>&)"
+
+
+bool MappingNode::remove_prompt(std::string prompt)
+{
+    auto button_it = find(button_prompts.begin(), button_prompts.end(), prompt);
+    // If the prompt is in buttons
+    if(button_it != button_prompts.end())
+    {   
+        button_prompts.erase(button_it);
+        return true;    
+    }   
+
+    auto axis_it = find(axis_prompts.begin(), axis_prompts.end(), prompt);
+    // If the prompt is in axes
+    if(axis_it != axis_prompts.end())
+    {   
+        axis_prompts.erase(axis_it);
+        return true;    
+    }   
+
+    auto dynamic_it = find(dynamic_prompts.begin(), dynamic_prompts.end(), prompt);
+    // If the prompt is in dynamic prompts
+    if(dynamic_it != dynamic_prompts.end())
+    {   
+        dynamic_prompts.erase(dynamic_it);
+        return true;    
+    }   
+
+    return false;
+
+}
+
+
+void MappingNode::info(string message)
+{
+    RCLCPP_INFO(this->get_logger(), message.c_str());
+
+} // end of "info(string)"

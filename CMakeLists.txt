@@ -42,11 +42,12 @@ set(SRC_FILES
 
   src/handles/axis.cpp
   src/handles/button.cpp
-  src/handles/gamepad_status.cpp
   src/handles/gamepad.cpp
 )
 
 set(MAPPINGS_SRC
+    src/handles/button.cpp
+
     src/mappings_main.cpp
 
     src/nodes/mapping_node.cpp
@@ -68,7 +69,7 @@ target_include_directories( ${MAIN_EXEC} PUBLIC
     $<INSTALL_INTERFACE:lib>
     $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include>
     $<BUILD_INTERFACE:/home/ubuntu/Documents/ros2_ws/build/joystick_driver/include>
-    /opt/ros/jazzy/include
+    /opt/ros/$ENV{ROS_DISTRO}/include
 )
 
 # YAML-CPP changed how they use CMake
@@ -132,16 +133,32 @@ install(
 # Testing
 if(BUILD_TESTING)
   # Add Dependencies
-  find_package(ament_lint_auto REQUIRED)
+    find_package(ament_lint_auto REQUIRED)
+    find_package(ament_cmake_gtest REQUIRED)
+    find_package(ament_cmake_gmock REQUIRED)
 
-  # the following line skips the linter which checks for copyrights
-  # comment the line when a copyright and license is added to all source files
-  set(ament_cmake_copyright_FOUND TRUE)
-  # the following line skips cpplint (only works in a git repo)
-  # comment the line when this package is in a git repo and when
-  # a copyright and license is added to all source files
-  set(ament_cmake_cpplint_FOUND TRUE)
-  ament_lint_auto_find_test_dependencies()
+    # the following line skips the linter which checks for copyrights
+    # comment the line when a copyright and license is added to all source files
+    set(ament_cmake_copyright_FOUND TRUE)
+    # the following line skips cpplint (only works in a git repo)
+    # comment the line when this package is in a git repo and when
+    # a copyright and license is added to all source files
+    set(ament_cmake_cpplint_FOUND TRUE)
+    ament_lint_auto_find_test_dependencies()
+
+    if(EXISTS "test/test.cpp")
+    ament_add_gtest(${PROJECT_NAME}_test test/test.cpp)
+
+    target_include_directories(${PROJECT_NAME}_test PUBLIC
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+        $<INSTALL_INTERFACE:include>
+    )
+
+    # Add Dependencies to Executable
+    ament_target_dependencies(${PROJECT_NAME}_test ${THIS_PACKAGE_INCLUDE_DEPENDS})
+
+    endif()
+
 endif()
 
 ament_package()
